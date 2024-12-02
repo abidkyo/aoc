@@ -190,6 +190,10 @@ def list_remove_value(val, src: list) -> list:
     return list(filter(lambda x: x != val, src))
 
 
+def list_remove_index(idx: int, src: list) -> list:
+    return src[:idx] + src[idx + 1 :]
+
+
 def bfs(graph, start):
     """
     BFS for shortest-path problem.
