@@ -32,6 +32,43 @@ DIR = {
     "l": (-1, 0),
 }
 
+# CLASS ------------------------------------------------------------------------
+
+
+class AOCSolver:
+    def __init__(self):
+        self.year = 2024
+        self.day = 0
+        self.expected_test = 0, 0
+        self.expected = 0, 0
+
+    def run(self) -> None:
+        print(f"AOC {self.year} Day {self.day:02}")
+
+        p1, p2 = self.solve(test=True)
+        print(f"Test: {p1 = }, {p2 = }")
+        assert (p1, p2) == self.expected_test, self.expected_test
+
+        p1, p2 = self.solve(test=False)
+        print(f"Real: {p1 = }, {p2 = }")
+        assert (p1, p2) == self.expected, self.expected
+
+    def solve(self, test: bool = False) -> tuple:
+        p1, p2 = 0, 0
+
+        return p1, p2
+
+    def read_input(self, test: bool) -> str:
+        # filename == "input/day01.txt" or "input/day01_test.txt"
+
+        filename = f"input/day{self.day:02d}"
+        filename += "_test" if test else ""
+        filename += ".txt"
+
+        with open(filename, "r") as f:
+            return f.read()
+
+
 # FUNCTIONS --------------------------------------------------------------------
 
 
@@ -97,17 +134,6 @@ def get_neighbour(x, y, amount=4):
             or (amount == 9)
         ):
             yield (x + dx, y + dy)
-
-
-def read_input(day: int, test: bool) -> str:
-    # filename == "input/day01.txt" or "input/day01_test.txt"
-
-    filename = f"input/day{day:02d}"
-    filename += "_test" if test else ""
-    filename += ".txt"
-
-    with open(filename, "r") as f:
-        return f.read()
 
 
 def en_digit(string: str) -> int:
