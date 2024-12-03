@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-AOC Helper Functions.
+AOC Utilities.
 """
 
 from collections.abc import Iterable
@@ -10,8 +10,7 @@ from itertools import chain, islice, pairwise, product, repeat
 from math import gcd, sqrt
 from re import findall
 
-# ------------------------------------------------------------------------------
-
+# CONSTANTS --------------------------------------------------------------------
 
 INFINITY = float("inf")
 EN_DIGITS = dict(
@@ -32,6 +31,8 @@ DIR = {
     "d": (0, 1),
     "l": (-1, 0),
 }
+
+# FUNCTIONS --------------------------------------------------------------------
 
 
 def cat(iterable):
