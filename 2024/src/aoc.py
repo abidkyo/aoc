@@ -22,14 +22,14 @@ EN_DIGITS = dict(
 
 # x,y point
 DIR = {
-    "n": (0, -1),
-    "e": (1, 0),
-    "s": (0, 1),
-    "w": (-1, 0),
     "u": (0, -1),
     "r": (1, 0),
     "d": (0, 1),
     "l": (-1, 0),
+    "ur": (1, -1),
+    "ul": (-1, -1),
+    "dr": (1, 1),
+    "dl": (-1, 1),
 }
 
 # CLASS ------------------------------------------------------------------------
@@ -124,14 +124,15 @@ def identity_matrix(n: int, val: int = 1):
     return mat
 
 
-def get_neighbour(x, y, amount=4):
-    assert amount in {4, 8, 9}
+def get_neighbour(x, y, direction=4):
+    assert direction in {3, 4, 8, 9}
 
     for dx, dy in product([-1, 0, 1], repeat=2):
         if (
-            (amount == 4 and abs(dx) != abs(dy))
-            or (amount == 8 and not dx == dy == 0)
-            or (amount == 9)
+            (direction == 3 and abs(dx) == abs(dy) and not dx == dy == 0)  # diagonal
+            or (direction == 4 and abs(dx) != abs(dy))  # cardinal
+            or (direction == 8 and not dx == dy == 0)  # compass
+            or (direction == 9)
         ):
             yield (x + dx, y + dy)
 
