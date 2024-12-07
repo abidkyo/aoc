@@ -7,7 +7,7 @@ AOC Utilities.
 from collections.abc import Iterable
 from copy import deepcopy
 from itertools import chain, islice, pairwise, product, repeat
-from math import gcd, sqrt
+from math import floor, gcd, log10, sqrt
 from re import findall
 
 # CONSTANTS --------------------------------------------------------------------
@@ -109,6 +109,17 @@ def lcm(nums: Iterable) -> int:
     for n in nums:
         res = res * n // gcd(res, n)
     return res
+
+
+def concat_int(x: int, y: int) -> int:
+    assert y >= 0, "positive y-values only"
+
+    if y > 0:
+        a = floor(log10(y))
+    else:
+        a = -1
+
+    return x * 10 ** (a + 1) + y
 
 
 def identity_matrix(n: int, val: int = 1):

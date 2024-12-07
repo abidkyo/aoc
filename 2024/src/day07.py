@@ -3,12 +3,12 @@
 """
 Number Operations.
 
-pypy3: 2.2s
+pypy3: 1.8s
 """
 
 from itertools import product
 
-from aoc import AOCSolver, integers, map_list
+from aoc import AOCSolver, concat_int, integers, map_list
 
 # ------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ def calc(N, OP):
             elif op == "B":
                 r *= N[i + 2]
             elif op == "C":
-                r = int(str(r) + str(N[i + 2]))
+                r = concat_int(r, N[i + 2])
 
         if r == target:
             res += r
