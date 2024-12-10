@@ -4,7 +4,7 @@
 Template for AOC Solution.
 """
 
-from aoc import AOCSolver
+from aoc import DIRC, AOCSolver
 
 # ------------------------------------------------------------------------------
 
@@ -38,6 +38,10 @@ if __name__ == "__main__":
     for y, r in enumerate(puzzle):
         for x, c in enumerate(r):
             G[P(x, y)] = c
+
+    for p in G:
+        for d in (DIRC[d] for d in "urdl"):
+            np = p + d
 
 
 # ------------------------------------------------------------------------------
