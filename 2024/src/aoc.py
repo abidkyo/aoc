@@ -9,6 +9,7 @@ from copy import deepcopy
 from itertools import chain, islice, pairwise, product, repeat
 from math import floor, gcd, log10, sqrt
 from re import findall
+from timeit import default_timer as timer
 
 # CONSTANTS --------------------------------------------------------------------
 
@@ -56,12 +57,16 @@ class AOCSolver:
     def run(self) -> None:
         print(f"AOC {self.year} Day {self.day:02}")
 
+        start = timer()
         p1, p2 = self.solve(test=True)
-        print(f"Test: {p1 = }, {p2 = }")
+        t = (timer() - start) * 1000
+        print(f"Test: {p1 = }, {p2 = }, {t = :.3f} ms")
         assert (p1, p2) == self.expected_test, self.expected_test
 
+        start = timer()
         p1, p2 = self.solve(test=False)
-        print(f"Real: {p1 = }, {p2 = }")
+        t = (timer() - start) * 1000
+        print(f"Real: {p1 = }, {p2 = }, {t = :.3f} ms")
         assert (p1, p2) == self.expected, self.expected
 
     def solve(self, test: bool = False) -> tuple:
