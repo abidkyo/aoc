@@ -3,7 +3,7 @@
 """
 Shortest-Path with Binary-Search.
 
-python3: 7.2s
+python3: 35 ms
 """
 
 from aoc import DIRC, AOCSolver, integers
@@ -12,6 +12,7 @@ from aoc import DIRC, AOCSolver, integers
 
 
 def bfs(W, S, E):
+    W = set(W)
     queue = [(S, 0)]
     seen = set([S])
 
@@ -54,14 +55,18 @@ class Day18Solver(AOCSolver):
             E = P(70, 70)
             L = 1024
 
-        w = set(W[:L])
-        p1 = bfs(w, S, E)
+        p1 = bfs(W[:L], S, E)
 
-        for i in range(L, len(W)):
-            w.add(W[i])
-            if bfs(w, S, E) == 0:
-                p2 = W[i]
-                break
+        lo, hi = L, len(W)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            res = bfs(W[:mid], S, E)
+            if res:
+                lo = mid + 1
+            else:
+                hi = mid
+
+        p2 = W[lo - 1]
 
         return p1, p2
 
