@@ -53,7 +53,7 @@ class Day17Solver(AOCSolver):
         self.expected = "2,1,4,7,6,0,3,1,4", 266932601404433
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).strip()
+        puzzle = solver.puzzle.strip()
         puzzle = list(integers(puzzle))
 
         R = puzzle[:3]

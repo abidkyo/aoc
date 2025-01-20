@@ -24,7 +24,7 @@ class Day11Solver(AOCSolver):
     def solve(self, test: bool = False) -> tuple:
         p1, p2 = 0, 0
 
-        S = solver.read_input(test).strip()
+        S = solver.puzzle.strip()
         S = Counter(integers(S))
 
         for i in range(75):

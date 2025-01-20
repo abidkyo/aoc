@@ -22,7 +22,7 @@ class Day20Solver(AOCSolver):
         self.expected = 1358, 1005856
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         G = {}
         W = set()

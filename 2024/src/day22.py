@@ -27,7 +27,7 @@ class Day22Solver(AOCSolver):
         self.expected = 18525593556, 2089
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).strip()
+        puzzle = solver.puzzle.strip()
 
         p1, p2 = 0, 0
         G = DefaultDict(int)

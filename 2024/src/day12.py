@@ -64,7 +64,7 @@ class Day12Solver(AOCSolver):
         self.expected = 1465112, 893790
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         G = {}
         P = complex

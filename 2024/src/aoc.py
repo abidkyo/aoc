@@ -57,11 +57,15 @@ class AOCSolver:
     def run(self) -> None:
         print(f"AOC {self.year} Day {self.day:02}")
 
+        self.puzzle = self.read_input(test=True)
+
         start = timer()
         p1, p2 = self.solve(test=True)
         t = (timer() - start) * 1000
         print(f"Test: {p1 = }, {p2 = }, {t = :.3f} ms")
         assert (p1, p2) == self.expected_test, self.expected_test
+
+        self.puzzle = self.read_input(test=False)
 
         start = timer()
         p1, p2 = self.solve(test=False)

@@ -55,7 +55,7 @@ class Day06Solver(AOCSolver):
         self.expected_test = 41, 6
 
     def solve(self, test: bool = False) -> tuple:
-        G = solver.read_input(test).splitlines()
+        G = solver.puzzle.splitlines()
         R, C = len(G), len(G[0])
 
         B = set()

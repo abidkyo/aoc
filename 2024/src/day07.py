@@ -42,7 +42,7 @@ class Day07Solver(AOCSolver):
         self.expected_test = 3749, 11387
 
     def solve(self, test: bool = False) -> tuple:
-        G = solver.read_input(test).splitlines()
+        G = solver.puzzle.splitlines()
         N = map_list(integers, G)
 
         p1, p2 = 0, 0

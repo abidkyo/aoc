@@ -22,7 +22,7 @@ class Day24Solver(AOCSolver):
         # 22738689785549
 
     def solve(self, test: bool = False) -> tuple:
-        wires, connections = solver.read_input(test).split("\n\n")
+        wires, connections = solver.puzzle.split("\n\n")
 
         W = {}
         C = {}

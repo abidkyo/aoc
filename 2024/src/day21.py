@@ -79,7 +79,7 @@ class Day21Solver(AOCSolver):
         self.expected = 134120, 167389793580400
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         p1, p2 = 0, 0
         for code in puzzle:

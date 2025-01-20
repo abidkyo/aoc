@@ -121,7 +121,7 @@ class Day15Solver(AOCSolver):
         self.expected = 1463512, 1486520
 
     def solve(self, test: bool = False) -> tuple:
-        G, M = solver.read_input(test).split("\n\n")
+        G, M = solver.puzzle.split("\n\n")
         G = G.splitlines()
 
         for a, b in {"\n": "", "^": "u", ">": "r", "v": "d", "<": "l"}.items():

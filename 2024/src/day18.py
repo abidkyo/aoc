@@ -42,7 +42,7 @@ class Day18Solver(AOCSolver):
         self.expected = 384, (36 + 10j)
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         P = complex
         W = [P(*integers(p)) for p in puzzle]

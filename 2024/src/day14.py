@@ -65,7 +65,7 @@ class Day14Solver(AOCSolver):
         if test:
             R, C = 7, 11
 
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         PV = [list(integers(pv)) for pv in puzzle]
 

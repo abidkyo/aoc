@@ -23,7 +23,7 @@ class Day04Solver(AOCSolver):
         A = set()
         XMAS = "XMAS"
 
-        G = solver.read_input(test).splitlines()
+        G = solver.puzzle.splitlines()
         R, C = len(G), len(G[0])
 
         for r in range(R):

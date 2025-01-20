@@ -22,7 +22,7 @@ class Day19Solver(AOCSolver):
         self.expected = 367, 724388733465031
 
     def solve(self, test: bool = False) -> tuple:
-        SS, S = solver.read_input(test).split("\n\n")
+        SS, S = solver.puzzle.split("\n\n")
 
         SS = tuple(SS.split(", "))
         S = S.splitlines()

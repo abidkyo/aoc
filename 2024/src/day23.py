@@ -20,7 +20,7 @@ class Day23Solver(AOCSolver):
         self.expected = 1411, "aq,bn,ch,dt,gu,ow,pk,qy,tv,us,yx,zg,zu"
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         G = DefaultDict(set)
         for line in puzzle:

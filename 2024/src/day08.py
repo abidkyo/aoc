@@ -21,7 +21,7 @@ class Day08Solver(AOCSolver):
         self.expected = 392, 1235
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).splitlines()
+        puzzle = solver.puzzle.splitlines()
 
         A = DefaultDict(list)
         G = {}

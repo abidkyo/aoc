@@ -21,7 +21,7 @@ class Day05Solver(AOCSolver):
         self.expected_test = 143, 123
 
     def solve(self, test: bool = False) -> tuple:
-        R, N = solver.read_input(test).split("\n\n")
+        R, N = solver.puzzle.split("\n\n")
 
         rules = DefaultDict(set)
         for r in R.splitlines():

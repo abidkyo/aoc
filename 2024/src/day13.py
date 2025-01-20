@@ -35,7 +35,7 @@ class Day13Solver(AOCSolver):
         self.expected = 39996, 73267584326867
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).split("\n\n")
+        puzzle = solver.puzzle.split("\n\n")
 
         p1, p2 = 0, 0
         for config in puzzle:

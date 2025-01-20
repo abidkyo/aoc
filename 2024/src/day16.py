@@ -60,7 +60,7 @@ class Day16Solver(AOCSolver):
         self.expected = 111480, 529
 
     def solve(self, test: bool = False) -> tuple:
-        G = solver.read_input(test).splitlines()
+        G = solver.puzzle.splitlines()
         R, C = len(G), len(G[0])
 
         for r in range(R):

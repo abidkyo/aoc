@@ -18,7 +18,7 @@ class Day25Solver(AOCSolver):
         self.expected = 3269, None
 
     def solve(self, test: bool = False) -> tuple:
-        puzzle = solver.read_input(test).split("\n\n")
+        puzzle = self.puzzle.split("\n\n")
         R = len(puzzle[0].splitlines())
 
         KEYS, LOCKS = [], []

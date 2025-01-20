@@ -18,6 +18,8 @@ class Day00Solver(AOCSolver):
         self.expected = 0, 0
 
     def solve(self, test: bool = False) -> tuple:
+        puzzle = self.puzzle.splitlines()
+
         p1, p2 = 0, 0
 
         return p1, p2

@@ -43,7 +43,7 @@ class Day09Solver(AOCSolver):
         self.expected = 6367087064415, 6390781891880
 
     def solve(self, test: bool = False) -> tuple:
-        D = solver.read_input(test).strip()
+        D = solver.puzzle.strip()
         D = digits(D)
 
         k = 0

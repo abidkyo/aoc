@@ -59,7 +59,7 @@ aoc_create() {
     # todo: fix this
     sed -i "12s/Day00/Day$DDAY/" "$src"
     sed -i "16s/=\ 0/=\ $DAY/" "$src"
-    sed -i "30s/Day00/Day$DDAY/" "$src"
+    sed -i "32s/Day00/Day$DDAY/" "$src"
   fi
 
   touch "${YEAR}/input/day${DDAY}.txt"
