@@ -4,7 +4,7 @@
 Elements Increasing/Decreasing.
 """
 
-from aoc import integers, list_remove_index, map_list, read_input
+from aoc import AOCSolver, integers, list_remove_index, map_list
 
 # ------------------------------------------------------------------------------
 
@@ -17,25 +17,35 @@ def check(L):
     return (incr or decr) and diff
 
 
-# txt = read_input(2, True).splitlines()
-txt = read_input(2, False).splitlines()
+class Day02Solver(AOCSolver):
+    def __init__(self):
+        super().__init__()
 
-G = map_list(integers, txt)
+        self.day = 2
+        self.expected_test = 2, 4
+        self.expected = 299, 364
 
-p1 = 0
-p2 = 0
-for R in G:
-    if check(R):
-        p1 += 1
-    elif any(check(list_remove_index(i, R)) for i in range(len(R))):
-        p2 += 1
+    def solve(self, test: bool = False) -> tuple:
+        puzzle = self.puzzle.splitlines()
+
+        G = map_list(integers, puzzle)
+
+        p1, p2 = 0, 0
+        for R in G:
+            if check(R):
+                p1 += 1
+            elif any(check(list_remove_index(i, R)) for i in range(len(R))):
+                p2 += 1
+
+        return p1, p1 + p2
 
 
-# 2, 299
-print(p1)
+# ------------------------------------------------------------------------------
 
-# 4, 364
-print(p1 + p2)
+
+if __name__ == "__main__":
+    solver = Day02Solver()
+    solver.run()
 
 
 # ------------------------------------------------------------------------------

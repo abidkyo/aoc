@@ -6,38 +6,51 @@ RegEx.
 
 import re
 
-from aoc import integers, read_input
+from aoc import AOCSolver, integers
 
 # ------------------------------------------------------------------------------
 
 
-# txt = read_input(3, True).strip()
-txt = read_input(3, False).strip()
+class Day03Solver(AOCSolver):
+    def __init__(self):
+        super().__init__()
 
-# (?:...) : non-capturing group
-#       | : alternative match
-PATTERN = r"do(?:n't)?\(\)|mul\(\d+,\d+\)"
+        self.day = 3
+        self.expected_test = 161, 48
+        self.expected = 166357705, 88811886
 
-p1, p2 = 0
-enabled = True
-for res in re.findall(PATTERN, txt):
-    try:
-        x, y = integers(res)
-        p1 += x * y
-        if enabled:
-            p2 += x * y
-    except ValueError:
-        if res == "do()":
-            enabled = True
-        else:
-            enabled = False
+    def solve(self, test: bool = False) -> tuple:
+        puzzle = self.puzzle.strip()
+
+        # (?:...) : non-capturing group
+        #       | : alternative match
+        PATTERN = r"do(?:n't)?\(\)|mul\(\d+,\d+\)"
+
+        p1, p2 = 0, 0
+        enabled = True
+        for res in re.findall(PATTERN, puzzle):
+            try:
+                x, y = integers(res)
+                p1 += x * y
+
+                if enabled:
+                    p2 += x * y
+
+            except ValueError:
+                if res == "do()":
+                    enabled = True
+                else:
+                    enabled = False
+
+        return p1, p2
 
 
-# 161, 166357705
-print(p1)
+# ------------------------------------------------------------------------------
 
-# 48, 88811886
-print(p2)
+
+if __name__ == "__main__":
+    solver = Day03Solver()
+    solver.run()
 
 
 # ------------------------------------------------------------------------------

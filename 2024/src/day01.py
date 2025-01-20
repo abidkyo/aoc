@@ -6,32 +6,42 @@ List and Counter.
 
 from collections import Counter
 
-from aoc import integers, list_transpose, map_list, read_input
+from aoc import AOCSolver, integers, list_transpose, map_list
 
 # ------------------------------------------------------------------------------
 
 
-# txt = read_input(1, True).splitlines()
-txt = read_input(1, False).splitlines()
+class Day01Solver(AOCSolver):
+    def __init__(self):
+        super().__init__()
 
-a, b = list_transpose(map_list(integers, txt))
+        self.day = 1
+        self.expected_test = 11, 31
+        self.expected = 1579939, 20351745
 
-a.sort()
-b.sort()
+    def solve(self, test: bool = False) -> tuple:
+        puzzle = self.puzzle.splitlines()
 
-counts = Counter(b)
+        a, b = list_transpose(map_list(integers, puzzle))
+        a.sort()
+        b.sort()
 
-diff = 0
-score = 0
-for x, y in zip(a, b):
-    diff += abs(y - x)
-    score += x * counts[x]
+        counts = Counter(b)
 
-# 11, 1579939
-print(diff)
+        p1, p2 = 0, 0
+        for x, y in zip(a, b):
+            p1 += abs(y - x)
+            p2 += x * counts[x]
 
-# 31, 20351745
-print(score)
+        return p1, p2
+
+
+# ------------------------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    solver = Day01Solver()
+    solver.run()
 
 
 # ------------------------------------------------------------------------------
