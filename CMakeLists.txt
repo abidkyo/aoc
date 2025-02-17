@@ -59,6 +59,8 @@ set(AOC_DAYS
     25
 )
 
+find_package(OpenSSL REQUIRED)
+
 foreach(YEAR ${AOC_YEAR})
   # target for every year
   add_custom_target(RUN_AOC_${YEAR})
@@ -71,6 +73,8 @@ foreach(YEAR ${AOC_YEAR})
     if(EXISTS ${src_file})
       # executable + target for every day in year
       add_executable(${exec_file} ${src_file})
+      target_link_libraries(${exec_file} PRIVATE OpenSSL::SSL)
+
       add_custom_target(
         RUN_${exec_file}
         DEPENDS ${exec_file}
