@@ -22,21 +22,20 @@ class Reindeer:
     distance: int
     points: int
 
+    def move(self):
+        if self.flying:
+            self.t_fly += 1
+            self.distance += self.speed
 
-def move(reindeer: Reindeer):
-    if reindeer.flying:
-        reindeer.t_fly += 1
-        reindeer.distance += reindeer.speed
+            if self.t_fly == self.fly:
+                self.t_fly = 0
+                self.flying = False
+        else:
+            self.t_rest += 1
 
-        if reindeer.t_fly == reindeer.fly:
-            reindeer.t_fly = 0
-            reindeer.flying = False
-    else:
-        reindeer.t_rest += 1
-
-        if reindeer.t_rest == reindeer.rest:
-            reindeer.t_rest = 0
-            reindeer.flying = True
+            if self.t_rest == self.rest:
+                self.t_rest = 0
+                self.flying = True
 
 
 class Day14Solver(AOCSolver):
@@ -68,7 +67,7 @@ class Day14Solver(AOCSolver):
             for r in R:
                 if r.distance == d_max != 0:
                     r.points += 1
-                move(r)
+                r.move()
 
         p1 = d_max
         p2 = max(r.points for r in R)
