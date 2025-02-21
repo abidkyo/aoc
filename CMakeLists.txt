@@ -17,6 +17,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # configure executable directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+
+# set compile flags
+set(CMAKE_C_FLAGS
+    "-Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Wcast-qual"
+)
+
 set(AOC_YEAR
     2015
     2016
