@@ -12,6 +12,17 @@ from aoc import AOCSolver, integers
 # ------------------------------------------------------------------------------
 
 
+def gen(v: int, n: int, p=None):
+    """Generate n-length list with sum of v."""
+    if not p:
+        p = []
+    if n == 1:
+        yield p + [v]
+    else:
+        for i in range(1, v - n + 2):
+            yield from gen(v - i, n - 1, p + [i])
+
+
 class Day15Solver(AOCSolver):
     def __init__(self):
         super().__init__()
@@ -26,9 +37,7 @@ class Day15Solver(AOCSolver):
 
         p1, p2 = 0, 0
 
-        for n in product(range(1, 100 + 1), repeat=len(G) - 1):
-            n += (100 - sum(n),)
-
+        for n in gen(100, len(G)):
             g = [[x * v for v in g] for g, x in zip(G, n)]
             g = [sum(v) for v in zip(*g)]
             g = [v if v > 0 else 0 for v in g]
