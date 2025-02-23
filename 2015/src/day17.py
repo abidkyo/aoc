@@ -1,7 +1,7 @@
 #!/usr/bin/env pypy3
 
 """
-DFS.
+Dynamic Programming.
 """
 
 from aoc import AOCSolver
@@ -26,32 +26,22 @@ class Day17Solver(AOCSolver):
         G = self.puzzle.splitlines()
         G = sorted([int(g) for g in G], reverse=True)
 
-        def dfs(graph):
-            stack = [(graph[0], {0})]
+        def dp(i, x, c):
+            if x == 0:
+                return [c]
+            if i == len(G):
+                return []
 
-            while stack:
-                score, visited = stack.pop()
+            path = []
+            if G[i] <= x:
+                path += dp(i + 1, x - G[i], c + 1)
+            path += dp(i + 1, x, c)
+            return path
 
-                if score == L:
-                    yield len(visited)
-
-                for i, g in enumerate(graph):
-                    if i <= max(visited):
-                        continue
-
-                    nscore = score + g
-                    if nscore > L:
-                        continue
-
-                    nvisited = visited | {i}
-                    stack.append((nscore, nvisited))
-
-        res = []
-        for i in range(len(G)):
-            res.extend(dfs(G[i:]))
+        res = dp(0, L, 0)
 
         p1 = len(res)
-        p2 = len(list(filter(lambda x: x == min(res), res)))
+        p2 = res.count(min(res))
 
         return p1, p2
 
