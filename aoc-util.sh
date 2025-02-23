@@ -23,23 +23,27 @@ ARGUMENTS:
   -d  DAY
 
 OPTIONS:
-  c  create files for given DAY
-  i  get input for given DAY
-  r  run program for given DAY
+  c  create files for given DAY in YEAR
+  i  get input for given DAY in YEAR
+  r  run program for given DAY in YEAR
 
 Note:
-  - DAY must be in range of 1 to 25,
-    except for 'r' option, DAY can be 0.
+  - YEAR must be in 4-digit format
+  - DAY must be in range of 1 to 25
+  - for 'r' option, YEAR and DAY can be 0.
 
 Examples:
   $(basename "$0") -y2023 -d2 c
   --> create files for day 2
 
   $(basename "$0") -d2 r
-  --> run program for day 2
+  --> run program for day 2 for default YEAR
 
   $(basename "$0") -d0 r
-  --> run program for ALL days
+  --> run program for ALL days in default YEAR
+
+  $(basename "$0") -y0 r
+  --> run program for ALL days in ALL years
 
 EOF
   exit "$1"
@@ -107,7 +111,16 @@ aoc_run() {
 }
 
 aoc_run_all() {
-  cd "$YEAR"
+  local years
+  years=$(ls -d 20*)
+
+  for year in $years; do
+    aoc_run_all_days "$year"
+  done
+}
+
+aoc_run_all_days() {
+  cd "$1"
 
   local srcs
   srcs=$(ls src/day*.py)
@@ -151,7 +164,7 @@ parse_args() {
   done
   shift $((OPTIND - 1))
 
-  if [[ -z $DAY ]]; then
+  if [[ -z $DAY && $YEAR -ne 0 ]]; then
     echo "ERROR: missing -d argument"
     show_help 1
   fi
@@ -183,8 +196,10 @@ main() {
   fi
 
   if [[ -n $AOC_RUN ]]; then
-    if [[ $DAY -eq 0 ]]; then
+    if [[ $YEAR -eq 0 ]]; then
       aoc_run_all
+    elif [[ $DAY -eq 0 ]]; then
+      aoc_run_all_days "$YEAR"
     else
       aoc_run
     fi
