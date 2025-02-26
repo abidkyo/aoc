@@ -4,6 +4,8 @@
 Game of Life.
 """
 
+from collections import defaultdict
+
 from aoc import DIRC, AOCSolver
 
 # ------------------------------------------------------------------------------
@@ -29,47 +31,39 @@ class Day18Solver(AOCSolver):
 
         R = len(puzzle)
         C = len(puzzle[0])
-        E = [P(0, 0), P(R - 1, 0), P(0, C - 1), P(R - 1, C - 1)]
+        E = set([P(0, 0), P(R - 1, 0), P(0, C - 1), P(R - 1, C - 1)])
 
-        G1 = {}
+        G = set()
         for y, r in enumerate(puzzle):
             for x, c in enumerate(r):
                 if c == "#":
-                    G1[P(x, y)] = 1
-                elif c == ".":
-                    G1[P(x, y)] = 0
-                else:
-                    assert False
+                    G.add(P(x, y))
 
-        G2 = G1.copy()
+        G2 = G
 
-        for p in E:
-            G2[p] = 1
+        def evolve(g):
+            N = defaultdict(int)
+            for p in g:
+                for d in DIRC.values():
+                    np = p + d
+                    if 0 <= np.real < C and 0 <= np.imag < R:
+                        N[np] += 1
 
-        def calc(g, p, part2):
-            if part2 and p in E:
-                return 1
+            ng = set()
+            for p, n in N.items():
+                if n == 3:
+                    ng.add(p)
+                elif p in g and n == 2:
+                    ng.add(p)
 
-            count = 0
-            for d in DIRC.values():
-                np = p + d
-                if np in g and g[np] == 1:
-                    count += 1
-
-            if count == 3:
-                return 1
-            if g[p] and count == 2:
-                return 1
-            return 0
+            return ng
 
         for _ in range(T):
-            # todo: instead of looping through all points,
-            # maybe loop over active points only
-            G1 = {p: calc(G1, p, False) for p in G1}
-            G2 = {p: calc(G2, p, True) for p in G2}
+            G = evolve(G)
+            G2 = evolve(G2 | E)
 
-        p1 = sum(G1.values())
-        p2 = sum(G2.values())
+        p1 = len(G)
+        p2 = len(G2 | E)
 
         return p1, p2
 
