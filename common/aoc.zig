@@ -3,7 +3,7 @@
 const std = @import("std");
 const Allocator = std.mem.Allocator;
 
-fn test_solve(_: Allocator, _: []const u8) []const u8 {
+fn test_solve(_: Allocator, _: []const u8, _: bool) []const u8 {
     return "solving";
 }
 
@@ -11,21 +11,52 @@ pub const AOCSolver = struct {
     allocator: Allocator,
     year: u16,
     day: u8,
-    solve: *const fn (allocator: Allocator, data: []const u8) []const u8,
+    solve: *const fn (
+        allocator: Allocator,
+        data: []const u8,
+        test_run: bool,
+    ) []const u8,
 
     pub fn info(self: AOCSolver) void {
         std.log.info("AOC {d} Day {d:0>2}", .{ self.year, self.day });
     }
 
     pub fn run(self: AOCSolver) []const u8 {
-        const filename_test = self.input_filename(true);
-        const data = self.read_input(filename_test);
+        var test_run = true;
 
-        const res = self.solve(self.allocator, data);
+        var filename = self.input_filename(test_run);
+        var data = self.read_input(filename);
+
+        var timer = std.time.Timer.start() catch unreachable;
+
+        const res_test = self.solve(self.allocator, data, true);
+        const time_test = timer.lap() / std.time.ns_per_ms;
+
+        test_run = false;
+
+        filename = self.input_filename(test_run);
+        data = self.read_input(filename);
+
+        _ = timer.reset();
+
+        const res_real = self.solve(self.allocator, data, false);
+        const time_real = timer.lap() / std.time.ns_per_ms;
+
+        const res = std.fmt.allocPrint(
+            self.allocator,
+            \\result
+            \\test: {s}, t = {d} ms
+            \\real: {s}, t = {d} ms
+        ,
+            .{ res_test, time_test, res_real, time_real },
+        ) catch unreachable;
+
+        std.log.info("{s}", .{res});
+
         return res;
     }
 
-    fn input_filename(
+    pub fn input_filename(
         self: AOCSolver,
         test_run: bool,
     ) []const u8 {
@@ -39,7 +70,7 @@ pub const AOCSolver = struct {
         return filename;
     }
 
-    fn read_input(
+    pub fn read_input(
         self: AOCSolver,
         filename: []const u8,
     ) []const u8 {
@@ -47,7 +78,9 @@ pub const AOCSolver = struct {
             self.allocator,
             filename,
             std.math.maxInt(usize),
-        ) catch unreachable;
+        ) catch {
+            @panic("ERROR: reading file");
+        };
 
         return std.mem.trimEnd(u8, data, "\n");
     }
@@ -95,7 +128,24 @@ test "read input" {
     try std.testing.expect(data[data.len - 1] != '\n');
 }
 
-test "run" {
+test "call solve" {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const solver = AOCSolver{
+        .year = 2024,
+        .day = 1,
+        .allocator = allocator,
+        .solve = test_solve,
+    };
+
+    const res = solver.solve(allocator, "", true);
+    try std.testing.expectEqualStrings(res, "solving");
+}
+
+test "call run" {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
@@ -109,7 +159,7 @@ test "run" {
     };
 
     const res = solver.run();
-    try std.testing.expectEqualStrings("solving", res);
+    try std.testing.expectStringStartsWith(res, "result");
 }
 
 // EOF -------------------------------------------------------------------------
