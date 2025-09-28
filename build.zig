@@ -55,6 +55,26 @@ pub fn build(b: *std.Build) void {
     const run_mod_tests = b.addRunArtifact(mod_tests);
     const test_step = b.step("test", "Run AOC module tests");
     test_step.dependOn(&run_mod_tests.step);
+
+    const exe = b.addExecutable(.{
+        .name = "script",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("common/script.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+    });
+
+    b.installArtifact(exe);
+
+    const run_step = b.step("script", "AOC Utility Script");
+    const run_cmd = b.addRunArtifact(exe);
+    run_step.dependOn(&run_cmd.step);
+    run_cmd.step.dependOn(b.getInstallStep());
+
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
 }
 
 // EOF -------------------------------------------------------------------------
