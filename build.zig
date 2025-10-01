@@ -62,6 +62,9 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("common/script.zig"),
             .target = target,
             .optimize = optimize,
+            .imports = &.{
+                .{ .name = "aoc", .module = aoc },
+            },
         }),
     });
 
