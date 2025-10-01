@@ -14,18 +14,22 @@ pub fn getSession() ![]const u8 {
     }
 }
 
-pub fn downloadInput(
-    allocator: Allocator,
-    writer: *Writer,
-    url: []const u8,
-    session: []const u8,
-) !void {
+pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
+    const session = try getSession();
     const cookie = try std.fmt.allocPrint(allocator, "session={s}", .{session});
 
+    const url = try std.fmt.allocPrint(
+        allocator,
+        "https://adventofcode.com/{d}/day/{d}/input",
+        .{ year, day },
+    );
     const header = [_]std.http.Header{
         .{ .name = "Cookie", .value = cookie },
         .{ .name = "User-Agent", .value = "abidkyo @ github.com/abidkyo" },
     };
+
+    var writer = std.io.Writer.Allocating.init(allocator);
+    defer writer.deinit();
 
     var client = std.http.Client{
         .allocator = allocator,
@@ -36,12 +40,22 @@ pub fn downloadInput(
         .location = .{ .url = url },
         .method = .GET,
         .extra_headers = &header,
-        .response_writer = writer,
+        .response_writer = &writer.writer,
     });
 
     if (response.status != .ok) {
         return error.DownloadInputFailed;
     }
+
+    const filename = try std.fmt.allocPrint(
+        allocator,
+        "{d}/input/day{d:0>2}.txt",
+        .{ year, day },
+    );
+    try std.fs.cwd().writeFile(.{
+        .sub_path = filename,
+        .data = writer.written(),
+    });
 
     std.log.info("download input successful", .{});
 }
@@ -122,30 +136,8 @@ pub fn main() !void {
 
     const allocator = arena.allocator();
 
-    // var writer = std.io.Writer.Allocating.init(allocator);
-    // defer writer.deinit();
-    //
-    // const session = try getSession();
-    //
-    // const url = try std.fmt.allocPrint(
-    //     allocator,
-    //     "https://adventofcode.com/{d}/day/{d}/input",
-    //     .{ year, day },
-    // );
-    //
-    // try downloadInput(allocator, &writer.writer, url, session);
-    //
-    // const filename = try std.fmt.allocPrint(
-    //     allocator,
-    //     "{d}/input/day{d:0>2}.txt",
-    //     .{ year, day },
-    // );
-    // try std.fs.cwd().writeFile(.{
-    //     .sub_path = filename,
-    //     .data = writer.written(),
-    // });
-
-    try generateFiles(allocator, year, day);
+    // try downloadInputToFile(allocator, year, day);
+    // try generateFiles(allocator, year, day);
 }
 
 // EOF -------------------------------------------------------------------------
