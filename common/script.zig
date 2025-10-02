@@ -14,7 +14,33 @@ pub fn getSession() ![]const u8 {
     }
 }
 
+pub fn checkInputAvailable(allocator: Allocator, year: u16, day: u8) !void {
+    const date_str = try std.fmt.allocPrint(
+        allocator,
+        "{d}-12-{d} 06:00",
+        .{ year, day },
+    );
+
+    const res = try std.process.Child.run(.{
+        .allocator = allocator,
+        .argv = &[_][]const u8{ "date", "-d", date_str, "+%s" },
+    });
+
+    const epoch_aoc = try std.fmt.parseInt(
+        i64,
+        std.mem.trimEnd(u8, res.stdout, "\n"),
+        10,
+    );
+    const epoch_now = std.time.timestamp();
+
+    if (epoch_aoc > epoch_now) {
+        return error.InputNotYetAvailable;
+    }
+}
+
 pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
+    try checkInputAvailable(allocator, year, day);
+
     const session = try getSession();
     const cookie = try std.fmt.allocPrint(allocator, "session={s}", .{session});
 
