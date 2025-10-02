@@ -126,18 +126,38 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
 }
 
 pub fn main() !void {
-    const year = 2025;
-    const day = 11;
-
-    std.log.info("AOC Script {d} Day {d:0>2}", .{ year, day });
-
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    // try downloadInputToFile(allocator, year, day);
-    // try generateFiles(allocator, year, day);
+    var args = try std.process.argsWithAllocator(allocator);
+    defer args.deinit();
+
+    _ = args.skip();
+
+    var year: u16 = 2025;
+    var day: u8 = 1;
+
+    if (args.next()) |arg| {
+        year = try std.fmt.parseInt(u16, arg, 10);
+    }
+    if (args.next()) |arg| {
+        day = try std.fmt.parseInt(u8, arg, 10);
+    }
+
+    std.log.info("AOC Script {d} Day {d:0>2}", .{ year, day });
+
+    if (args.next()) |arg| {
+        if (std.mem.eql(u8, arg, "c")) {
+            try generateFiles(allocator, year, day);
+        } else if (std.mem.eql(u8, arg, "i")) {
+            try downloadInputToFile(allocator, year, day);
+        } else if (std.mem.eql(u8, arg, "ci")) {
+            try downloadInputToFile(allocator, year, day);
+            try generateFiles(allocator, year, day);
+        }
+    }
 }
 
 // EOF -------------------------------------------------------------------------
