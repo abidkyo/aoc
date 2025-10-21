@@ -174,14 +174,11 @@ pub fn main() !void {
 
     std.log.info("AOC Script {d} Day {d:0>2}", .{ year, day });
 
-    if (args.next()) |arg| {
-        if (std.mem.eql(u8, arg, "c")) {
-            try generateFiles(allocator, year, day);
-        } else if (std.mem.eql(u8, arg, "i")) {
-            try downloadInputToFile(allocator, year, day);
-        } else if (std.mem.eql(u8, arg, "ci")) {
-            try downloadInputToFile(allocator, year, day);
-            try generateFiles(allocator, year, day);
+    while (args.next()) |arg| {
+        switch (arg[0]) {
+            'c' => try generateFiles(allocator, year, day),
+            'i' => try downloadInputToFile(allocator, year, day),
+            else => return,
         }
     }
 }
