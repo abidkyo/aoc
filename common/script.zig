@@ -92,24 +92,34 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         "{d}/src",
         .{year},
     );
+    _ = try std.fs.cwd().makePath(src_dirname);
+
     const input_dirname = try std.fmt.allocPrint(
         allocator,
         "{d}/input",
         .{year},
     );
-    const src_name = try std.fmt.allocPrint(
-        allocator,
-        "{d}/src/day{d:0>2}.zig",
-        .{ year, day },
-    );
+    _ = try std.fs.cwd().makePath(input_dirname);
+
     const input_name = try std.fmt.allocPrint(
         allocator,
         "{d}/input/day{d:0>2}.txt",
         .{ year, day },
     );
+    const input_file = try std.fs.cwd().createFile(input_name, .{});
+    defer input_file.close();
+
     const testinput_name = try std.fmt.allocPrint(
         allocator,
         "{d}/input/day{d:0>2}_test.txt",
+        .{ year, day },
+    );
+    const testinput_file = try std.fs.cwd().createFile(testinput_name, .{});
+    defer testinput_file.close();
+
+    const src_name = try std.fmt.allocPrint(
+        allocator,
+        "{d}/src/day{d:0>2}.zig",
         .{ year, day },
     );
 
@@ -118,7 +128,6 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         "common/template.zig",
         std.math.maxInt(usize),
     );
-
     template = try std.mem.replaceOwned(
         u8,
         allocator,
@@ -133,15 +142,6 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         "\"{{day}}\"",
         try std.fmt.allocPrint(allocator, "{d}", .{day}),
     );
-
-    _ = try std.fs.cwd().makePath(src_dirname);
-    _ = try std.fs.cwd().makePath(input_dirname);
-
-    const input_file = try std.fs.cwd().createFile(input_name, .{});
-    defer input_file.close();
-
-    const testinput_file = try std.fs.cwd().createFile(testinput_name, .{});
-    defer testinput_file.close();
 
     _ = try std.fs.cwd().writeFile(.{
         .sub_path = src_name,
