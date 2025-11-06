@@ -6,12 +6,15 @@ const Allocator = std.mem.Allocator;
 const aoc = @import("aoc");
 
 pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) []const u8 {
-    const p1 = 0;
-    const p2 = 0;
+    var p1: u32 = 0;
+    var p2: u32 = 0;
 
     if (!test_run) return "";
     // _ = test_run;
     _ = data;
+
+    p1 = 0;
+    p2 = 0;
 
     const result = std.fmt.allocPrint(
         allocator,
