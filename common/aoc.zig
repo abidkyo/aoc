@@ -17,11 +17,13 @@ pub const AOCSolver = struct {
         test_run: bool,
     ) []const u8,
 
-    pub fn info(self: AOCSolver) void {
+    const Self = @This();
+
+    pub fn info(self: Self) void {
         std.log.info("AOC {d} Day {d:0>2}", .{ self.year, self.day });
     }
 
-    pub fn run(self: AOCSolver) []const u8 {
+    pub fn run(self: Self) []const u8 {
         var test_run = true;
 
         var filename = self.input_filename(test_run);
@@ -57,7 +59,7 @@ pub const AOCSolver = struct {
     }
 
     pub fn input_filename(
-        self: AOCSolver,
+        self: Self,
         test_run: bool,
     ) []const u8 {
         const test_str = if (test_run) "_test" else "";
@@ -71,7 +73,7 @@ pub const AOCSolver = struct {
     }
 
     pub fn read_input(
-        self: AOCSolver,
+        self: Self,
         filename: []const u8,
     ) []const u8 {
         const data = std.fs.cwd().readFileAlloc(
@@ -87,12 +89,12 @@ pub const AOCSolver = struct {
 };
 
 test "input filename" {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    const solver = AOCSolver{
+    const solver: AOCSolver = .{
         .year = 2024,
         .day = 1,
         .allocator = allocator,
@@ -109,12 +111,12 @@ test "input filename" {
 }
 
 test "read input" {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    const solver = AOCSolver{
+    const solver: AOCSolver = .{
         .year = 2024,
         .day = 1,
         .allocator = allocator,
@@ -129,12 +131,12 @@ test "read input" {
 }
 
 test "call solve" {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    const solver = AOCSolver{
+    const solver: AOCSolver = .{
         .year = 2024,
         .day = 1,
         .allocator = allocator,
@@ -146,12 +148,12 @@ test "call solve" {
 }
 
 test "call run" {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    const solver = AOCSolver{
+    const solver: AOCSolver = .{
         .year = 2024,
         .day = 1,
         .allocator = allocator,

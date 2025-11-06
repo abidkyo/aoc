@@ -54,10 +54,10 @@ pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
         .{ .name = "User-Agent", .value = "abidkyo @ github.com/abidkyo" },
     };
 
-    var writer = std.io.Writer.Allocating.init(allocator);
+    var writer: std.io.Writer.Allocating = .init(allocator);
     defer writer.deinit();
 
-    var client = std.http.Client{
+    var client: std.http.Client = .{
         .allocator = allocator,
     };
     defer client.deinit();
@@ -152,7 +152,7 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
 }
 
 pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();

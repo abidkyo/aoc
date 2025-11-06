@@ -25,12 +25,12 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) []const u8 
 }
 
 pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
 
-    const solver = aoc.AOCSolver{
+    const solver: aoc.AOCSolver = .{
         .year = "{{year}}",
         .day = "{{day}}",
         .allocator = allocator,
