@@ -5,9 +5,13 @@ const Allocator = std.mem.Allocator;
 
 const aoc = @import("aoc");
 
-pub fn solve(allocator: Allocator, _: []const u8, _: bool) []const u8 {
+pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) []const u8 {
     const p1 = 0;
     const p2 = 0;
+
+    if (!test_run) return "";
+    // _ = test_run;
+    _ = data;
 
     const result = std.fmt.allocPrint(
         allocator,
