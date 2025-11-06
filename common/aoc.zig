@@ -45,8 +45,8 @@ pub const AOCSolver = struct {
         const res = std.fmt.allocPrint(
             self.allocator,
             \\result
-            \\test: {s}, t = {d} ms
-            \\real: {s}, t = {d} ms
+            \\      test: {s}, t = {d} ms
+            \\      real: {s}, t = {d} ms
         ,
             .{ res_test, time_test, res_real, time_real },
         ) catch unreachable;
