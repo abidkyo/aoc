@@ -6,10 +6,25 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // -------------------------------------------------------------------------
+
     const aoc = b.addModule("aoc", .{
         .root_source_file = b.path("common/aoc.zig"),
         .target = target,
     });
+
+    const aoc_test = b.addTest(.{
+        .name = "aoc",
+        .root_module = aoc,
+    });
+    const run_aoc_test = b.addRunArtifact(aoc_test);
+
+    // -------------------------------------------------------------------------
+
+    const test_step = b.step("test", "Run module tests");
+    test_step.dependOn(&run_aoc_test.step);
+
+    // -------------------------------------------------------------------------
 
     for (2015..2026) |year| {
         const run_step_year = b.step(b.fmt("{d}", .{year}), b.fmt("Run AOC {d}", .{year}));
@@ -41,43 +56,32 @@ pub fn build(b: *std.Build) void {
             run_cmd.step.dependOn(b.getInstallStep());
 
             run_step_year.dependOn(&run_cmd.step);
-
-            if (b.args) |args| {
-                run_cmd.addArgs(args);
-            }
         }
     }
 
-    const mod_tests = b.addTest(.{
-        .root_module = aoc,
-    });
+    // -------------------------------------------------------------------------
 
-    const run_mod_tests = b.addRunArtifact(mod_tests);
-    const test_step = b.step("test", "Run AOC module tests");
-    test_step.dependOn(&run_mod_tests.step);
-
-    const exe = b.addExecutable(.{
+    const script = b.addExecutable(.{
         .name = "script",
         .root_module = b.createModule(.{
             .root_source_file = b.path("common/script.zig"),
             .target = target,
             .optimize = optimize,
-            .imports = &.{
-                .{ .name = "aoc", .module = aoc },
-            },
         }),
     });
 
-    b.installArtifact(exe);
+    b.installArtifact(script);
 
-    const run_step = b.step("script", "AOC Utility Script");
-    const run_cmd = b.addRunArtifact(exe);
-    run_step.dependOn(&run_cmd.step);
-    run_cmd.step.dependOn(b.getInstallStep());
+    const run_script_step = b.step("script", "AOC Utility Script");
+    const run_script_cmd = b.addRunArtifact(script);
+    run_script_step.dependOn(&run_script_cmd.step);
+    run_script_cmd.step.dependOn(b.getInstallStep());
 
     if (b.args) |args| {
-        run_cmd.addArgs(args);
+        run_script_cmd.addArgs(args);
     }
+
+    // -------------------------------------------------------------------------
 }
 
 // EOF -------------------------------------------------------------------------
