@@ -8,6 +8,10 @@ const aoc = @import("aoc");
 pub const Result = struct {
     p1: u32,
     p2: u32,
+
+    pub fn format(self: @This(), writer: *std.Io.Writer) std.Io.Writer.Error!void {
+        return writer.print("p1 = {d}, p2 = {d}", .{ self.p1, self.p2 });
+    }
 };
 
 pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {

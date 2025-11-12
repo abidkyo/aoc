@@ -11,6 +11,10 @@ fn test_solve(_: Allocator, _: []const u8, _: bool) !TestResult {
 pub const TestResult = struct {
     p1: u32,
     p2: []const u8,
+
+    pub fn format(self: @This(), writer: *std.Io.Writer) std.Io.Writer.Error!void {
+        return writer.print("p1 = {d}, p2 = {s}", .{ self.p1, self.p2 });
+    }
 };
 
 pub fn AOCSolver(comptime T: type) type {
@@ -59,13 +63,7 @@ pub fn AOCSolver(comptime T: type) type {
 
             const prefix = if (test_run) "test" else "real";
 
-            const res = try std.fmt.allocPrint(
-                self.allocator,
-                "{s}: {any}, t = {d} ms",
-                .{ prefix, result, duration },
-            );
-
-            std.log.info("{s}", .{res});
+            std.log.info("{s}: {f}, t = {d} ms", .{ prefix, result, duration });
 
             return;
         }
