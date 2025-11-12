@@ -13,9 +13,7 @@ pub const Result = struct {
 pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     _ = allocator;
     _ = data;
-
-    if (!test_run) return result;
-    // _ = test_run;
+    _ = test_run;
 
     var result: Result = .{ .p1 = 0, .p2 = 0 };
 
@@ -40,7 +38,8 @@ pub fn main() !void {
 
     solver.info();
 
-    _ = try solver.run();
+    _ = try solver.run(true);
+    // _ = try solver.run(false);
 }
 
 // EOF -------------------------------------------------------------------------

@@ -48,34 +48,21 @@ pub fn AOCSolver(comptime T: type) type {
             std.log.info("AOC {d} Day {d:0>2}", .{ self.year, self.day });
         }
 
-        pub fn run(self: Self) !void {
-            var test_run = true;
-
-            var filename = try self.input_filename(test_run);
-            var data = try self.read_input(filename);
+        pub fn run(self: Self, test_run: bool) !void {
+            const filename = try self.input_filename(test_run);
+            const data = try self.read_input(filename);
 
             var timer = try std.time.Timer.start();
 
-            const res_test = try self.solve(self.allocator, data, true);
-            const time_test = timer.lap() / std.time.ns_per_ms;
+            const result = try self.solve(self.allocator, data, test_run);
+            const duration = timer.lap() / std.time.ns_per_ms;
 
-            test_run = false;
-
-            filename = try self.input_filename(test_run);
-            data = try self.read_input(filename);
-
-            _ = timer.reset();
-
-            const res_real = try self.solve(self.allocator, data, false);
-            const time_real = timer.lap() / std.time.ns_per_ms;
+            const prefix = if (test_run) "test" else "real";
 
             const res = try std.fmt.allocPrint(
                 self.allocator,
-                \\result
-                \\      test: {any}, t = {d} ms
-                \\      real: {any}, t = {d} ms
-            ,
-                .{ res_test, time_test, res_real, time_real },
+                "{s}: {any}, t = {d} ms",
+                .{ prefix, result, duration },
             );
 
             std.log.info("{s}", .{res});
@@ -178,7 +165,7 @@ test "call run" {
         test_solve,
     );
 
-    _ = try solver.run();
+    _ = try solver.run(true);
 }
 
 // EOF -------------------------------------------------------------------------
