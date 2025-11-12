@@ -3,7 +3,7 @@
 const std = @import("std");
 const Allocator = std.mem.Allocator;
 
-fn test_solve(_: Allocator, _: []const u8, _: bool) []const u8 {
+fn test_solve(_: Allocator, _: []const u8, _: bool) ![]const u8 {
     return "solving";
 }
 
@@ -15,7 +15,7 @@ pub const AOCSolver = struct {
         allocator: Allocator,
         data: []const u8,
         test_run: bool,
-    ) []const u8,
+    ) anyerror![]const u8,
 
     const Self = @This();
 
@@ -23,67 +23,58 @@ pub const AOCSolver = struct {
         std.log.info("AOC {d} Day {d:0>2}", .{ self.year, self.day });
     }
 
-    pub fn run(self: Self) []const u8 {
+    pub fn run(self: Self) ![]const u8 {
         var test_run = true;
 
-        var filename = self.input_filename(test_run);
-        var data = self.read_input(filename);
+        var filename = try self.input_filename(test_run);
+        var data = try self.read_input(filename);
 
-        var timer = std.time.Timer.start() catch unreachable;
+        var timer = try std.time.Timer.start();
 
-        const res_test = self.solve(self.allocator, data, true);
+        const res_test = try self.solve(self.allocator, data, true);
         const time_test = timer.lap() / std.time.ns_per_ms;
 
         test_run = false;
 
-        filename = self.input_filename(test_run);
-        data = self.read_input(filename);
+        filename = try self.input_filename(test_run);
+        data = try self.read_input(filename);
 
         _ = timer.reset();
 
-        const res_real = self.solve(self.allocator, data, false);
+        const res_real = try self.solve(self.allocator, data, false);
         const time_real = timer.lap() / std.time.ns_per_ms;
 
-        const res = std.fmt.allocPrint(
+        const res = try std.fmt.allocPrint(
             self.allocator,
             \\result
             \\      test: {s}, t = {d} ms
             \\      real: {s}, t = {d} ms
         ,
             .{ res_test, time_test, res_real, time_real },
-        ) catch unreachable;
+        );
 
         std.log.info("{s}", .{res});
 
         return res;
     }
 
-    pub fn input_filename(
-        self: Self,
-        test_run: bool,
-    ) []const u8 {
+    pub fn input_filename(self: Self, test_run: bool) ![]const u8 {
         const test_str = if (test_run) "_test" else "";
 
-        const filename = std.fmt.allocPrint(
+        const filename = try std.fmt.allocPrint(
             self.allocator,
             "{d}/input/day{d:0>2}{s}.txt",
             .{ self.year, self.day, test_str },
-        ) catch unreachable;
+        );
         return filename;
     }
 
-    pub fn read_input(
-        self: Self,
-        filename: []const u8,
-    ) []const u8 {
-        const data = std.fs.cwd().readFileAlloc(
+    pub fn read_input(self: Self, filename: []const u8) ![]const u8 {
+        const data = try std.fs.cwd().readFileAlloc(
             self.allocator,
             filename,
             std.math.maxInt(usize),
-        ) catch {
-            @panic("ERROR: reading file");
-        };
-
+        );
         return std.mem.trimEnd(u8, data, "\n");
     }
 };
@@ -101,11 +92,11 @@ test "input filename" {
         .solve = test_solve,
     };
 
-    const filename_test = solver.input_filename(true);
+    const filename_test = try solver.input_filename(true);
 
     try std.testing.expectEqualStrings("2024/input/day01_test.txt", filename_test);
 
-    const filename = solver.input_filename(false);
+    const filename = try solver.input_filename(false);
 
     try std.testing.expectEqualStrings("2024/input/day01.txt", filename);
 }
@@ -123,8 +114,8 @@ test "read input" {
         .solve = test_solve,
     };
 
-    const filename_test = solver.input_filename(true);
-    const data = solver.read_input(filename_test);
+    const filename_test = try solver.input_filename(true);
+    const data = try solver.read_input(filename_test);
 
     try std.testing.expect(data.len != 0);
     try std.testing.expect(data[data.len - 1] != '\n');
@@ -143,7 +134,7 @@ test "call solve" {
         .solve = test_solve,
     };
 
-    const res = solver.solve(allocator, "", true);
+    const res = try solver.solve(allocator, "", true);
     try std.testing.expectEqualStrings(res, "solving");
 }
 
@@ -160,7 +151,7 @@ test "call run" {
         .solve = test_solve,
     };
 
-    const res = solver.run();
+    const res = try solver.run();
     try std.testing.expectStringStartsWith(res, "result");
 }
 

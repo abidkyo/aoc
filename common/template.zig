@@ -5,7 +5,7 @@ const Allocator = std.mem.Allocator;
 
 const aoc = @import("aoc");
 
-pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) []const u8 {
+pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) ![]const u8 {
     var p1: u32 = 0;
     var p2: u32 = 0;
 
@@ -16,11 +16,11 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) []const u8 
     p1 = 0;
     p2 = 0;
 
-    const result = std.fmt.allocPrint(
+    const result = try std.fmt.allocPrint(
         allocator,
         "p1 = {d}, p2 = {d}",
         .{ p1, p2 },
-    ) catch unreachable;
+    );
     return result;
 }
 
@@ -39,7 +39,7 @@ pub fn main() !void {
 
     solver.info();
 
-    _ = solver.run();
+    _ = try solver.run();
 }
 
 // EOF -------------------------------------------------------------------------
