@@ -59,11 +59,11 @@ pub fn AOCSolver(comptime T: type) type {
             var timer = try std.time.Timer.start();
 
             const result = try self.solve(self.allocator, data, test_run);
-            const duration = timer.lap() / std.time.ns_per_ms;
+            const duration = timer.lap();
 
             const prefix = if (test_run) "test" else "real";
 
-            std.log.info("{s}: {f}, t = {d} ms", .{ prefix, result, duration });
+            std.log.info("{s}: {f}, t = {D}", .{ prefix, result, duration });
 
             return;
         }
