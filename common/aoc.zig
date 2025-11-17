@@ -91,7 +91,7 @@ pub fn AOCSolver(comptime T: type) type {
 }
 
 test "input filename" {
-    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
@@ -113,7 +113,7 @@ test "input filename" {
 }
 
 test "read input" {
-    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
@@ -133,7 +133,7 @@ test "read input" {
 }
 
 test "call solve" {
-    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
@@ -151,7 +151,7 @@ test "call solve" {
 }
 
 test "call run" {
-    var arena: std.heap.ArenaAllocator = .init(std.heap.page_allocator);
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
     defer arena.deinit();
 
     const allocator = arena.allocator();
