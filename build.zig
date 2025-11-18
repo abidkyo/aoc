@@ -21,8 +21,22 @@ pub fn build(b: *std.Build) void {
 
     // -------------------------------------------------------------------------
 
+    const position = b.addModule("position", .{
+        .root_source_file = b.path("common/position.zig"),
+        .target = target,
+    });
+
+    const position_test = b.addTest(.{
+        .name = "position",
+        .root_module = position,
+    });
+    const run_position_test = b.addRunArtifact(position_test);
+
+    // -------------------------------------------------------------------------
+
     const test_step = b.step("test", "Run module tests");
     test_step.dependOn(&run_aoc_test.step);
+    test_step.dependOn(&run_position_test.step);
 
     // -------------------------------------------------------------------------
 
@@ -44,6 +58,7 @@ pub fn build(b: *std.Build) void {
                     .optimize = optimize,
                     .imports = &.{
                         .{ .name = "aoc", .module = aoc },
+                        .{ .name = "position", .module = position },
                     },
                 }),
             });
