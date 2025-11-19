@@ -38,6 +38,8 @@ pub fn main() !void {
         1,
         allocator,
         solve,
+        Result{ .p1 = 0, .p2 = 0 },
+        Result{ .p1 = 0, .p2 = 0 },
     );
 
     solver.info();

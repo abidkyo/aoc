@@ -67,6 +67,8 @@ pub fn main() !void {
         1,
         allocator,
         solve,
+        Result{ .p1 = 8, .p2 = 4 },
+        Result{ .p1 = 246, .p2 = 124 },
     );
 
     solver.info();

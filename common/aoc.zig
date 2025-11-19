@@ -13,7 +13,7 @@ pub const TestResult = struct {
     p2: []const u8,
 
     pub fn format(self: @This(), writer: *std.Io.Writer) std.Io.Writer.Error!void {
-        return writer.print("p1 = {d}, p2 = {s}", .{ self.p1, self.p2 });
+        return writer.print("p1 = {d}, p2 = \"{s}\"", .{ self.p1, self.p2 });
     }
 };
 
@@ -23,6 +23,8 @@ pub fn AOCSolver(comptime T: type) type {
         day: u8,
         allocator: Allocator,
         solve: *const fn (Allocator, []const u8, bool) anyerror!T,
+        expected_test: T,
+        expected_real: T,
 
         const Self = @This();
 
@@ -31,12 +33,16 @@ pub fn AOCSolver(comptime T: type) type {
             day: u8,
             allocator: Allocator,
             solve: *const fn (Allocator, []const u8, bool) anyerror!T,
+            expected_test: T,
+            expected_real: T,
         ) Self {
             return .{
                 .year = year,
                 .day = day,
                 .allocator = allocator,
                 .solve = solve,
+                .expected_test = expected_test,
+                .expected_real = expected_real,
             };
         }
 
@@ -54,8 +60,13 @@ pub fn AOCSolver(comptime T: type) type {
             const duration = timer.lap();
 
             const prefix = if (test_run) "test" else "real";
-
             std.log.info("{s}: {f}, t = {D}", .{ prefix, result, duration });
+
+            const expected_result = if (test_run) self.expected_test else self.expected_real;
+            if (!std.meta.eql(result, expected_result)) {
+                std.log.err("expected: {f}", .{expected_result});
+                return error.WrongResult;
+            }
 
             return;
         }
@@ -93,6 +104,8 @@ test "input filename" {
         1,
         allocator,
         test_solve,
+        TestResult{ .p1 = 1234, .p2 = "solving" },
+        TestResult{ .p1 = 1234, .p2 = "solving" },
     );
 
     const filename_test = try solver.input_filename(true);
@@ -115,6 +128,8 @@ test "read input" {
         1,
         allocator,
         test_solve,
+        TestResult{ .p1 = 1234, .p2 = "solving" },
+        TestResult{ .p1 = 1234, .p2 = "solving" },
     );
 
     const filename_test = try solver.input_filename(true);
@@ -135,6 +150,8 @@ test "call solve" {
         1,
         allocator,
         test_solve,
+        TestResult{ .p1 = 1234, .p2 = "solving" },
+        TestResult{ .p1 = 1234, .p2 = "solving" },
     );
 
     const res = try solver.solve(allocator, "", true);
@@ -153,9 +170,12 @@ test "call run" {
         1,
         allocator,
         test_solve,
+        TestResult{ .p1 = 1234, .p2 = "solving" },
+        TestResult{ .p1 = 1234, .p2 = "solving" },
     );
 
     _ = try solver.run(true);
+    _ = try solver.run(false);
 }
 
 // EOF -------------------------------------------------------------------------
