@@ -39,6 +39,16 @@ pub fn checkInputAvailable(allocator: Allocator, year: u16, day: u8) !void {
 }
 
 pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
+    const filename = try std.fmt.allocPrint(
+        allocator,
+        "{d}/input/day{d:0>2}.txt",
+        .{ year, day },
+    );
+    if (std.fs.cwd().access(filename, .{})) |_| {
+        std.log.info("input already available: {s}", .{filename});
+        return;
+    } else |_| {}
+
     try checkInputAvailable(allocator, year, day);
 
     const session = try getSession();
@@ -73,17 +83,12 @@ pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
         return error.DownloadInputFailed;
     }
 
-    const filename = try std.fmt.allocPrint(
-        allocator,
-        "{d}/input/day{d:0>2}.txt",
-        .{ year, day },
-    );
     try std.fs.cwd().writeFile(.{
         .sub_path = filename,
         .data = writer.written(),
     });
 
-    std.log.info("download input successful", .{});
+    std.log.info("input downloaded: {s}", .{filename});
 }
 
 pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
@@ -106,16 +111,28 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         "{d}/input/day{d:0>2}.txt",
         .{ year, day },
     );
-    const input_file = try std.fs.cwd().createFile(input_name, .{});
-    defer input_file.close();
+    if (std.fs.cwd().access(input_name, .{})) |_| {
+        std.log.info("file available: {s}", .{input_name});
+    } else |_| {
+        const input_file = try std.fs.cwd().createFile(input_name, .{});
+        defer input_file.close();
+
+        std.log.info("file generated: {s}", .{input_name});
+    }
 
     const testinput_name = try std.fmt.allocPrint(
         allocator,
         "{d}/input/day{d:0>2}_test.txt",
         .{ year, day },
     );
-    const testinput_file = try std.fs.cwd().createFile(testinput_name, .{});
-    defer testinput_file.close();
+    if (std.fs.cwd().access(testinput_name, .{})) |_| {
+        std.log.info("file available: {s}", .{testinput_name});
+    } else |_| {
+        const testinput_file = try std.fs.cwd().createFile(testinput_name, .{});
+        defer testinput_file.close();
+
+        std.log.info("file generated: {s}", .{testinput_name});
+    }
 
     const src_name = try std.fmt.allocPrint(
         allocator,
@@ -123,32 +140,36 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         .{ year, day },
     );
 
-    var template = try std.fs.cwd().readFileAlloc(
-        allocator,
-        "common/template.zig",
-        std.math.maxInt(usize),
-    );
-    template = try std.mem.replaceOwned(
-        u8,
-        allocator,
-        template,
-        "\"{{year}}\"",
-        try std.fmt.allocPrint(allocator, "{d}", .{year}),
-    );
-    template = try std.mem.replaceOwned(
-        u8,
-        allocator,
-        template,
-        "\"{{day}}\"",
-        try std.fmt.allocPrint(allocator, "{d}", .{day}),
-    );
+    if (std.fs.cwd().access(src_name, .{})) |_| {
+        std.log.info("file available: {s}", .{src_name});
+    } else |_| {
+        var template = try std.fs.cwd().readFileAlloc(
+            allocator,
+            "common/template.zig",
+            std.math.maxInt(usize),
+        );
+        template = try std.mem.replaceOwned(
+            u8,
+            allocator,
+            template,
+            "\"{{year}}\"",
+            try std.fmt.allocPrint(allocator, "{d}", .{year}),
+        );
+        template = try std.mem.replaceOwned(
+            u8,
+            allocator,
+            template,
+            "\"{{day}}\"",
+            try std.fmt.allocPrint(allocator, "{d}", .{day}),
+        );
 
-    _ = try std.fs.cwd().writeFile(.{
-        .sub_path = src_name,
-        .data = template,
-    });
+        _ = try std.fs.cwd().writeFile(.{
+            .sub_path = src_name,
+            .data = template,
+        });
 
-    std.log.info("generate files successful", .{});
+        std.log.info("file generated: {s}", .{src_name});
+    }
 }
 
 pub fn main() !void {
