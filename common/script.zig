@@ -106,20 +106,6 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
     );
     _ = try std.fs.cwd().makePath(input_dirname);
 
-    const input_name = try std.fmt.allocPrint(
-        allocator,
-        "{d}/input/day{d:0>2}.txt",
-        .{ year, day },
-    );
-    if (std.fs.cwd().access(input_name, .{})) |_| {
-        std.log.info("file available: {s}", .{input_name});
-    } else |_| {
-        const input_file = try std.fs.cwd().createFile(input_name, .{});
-        defer input_file.close();
-
-        std.log.info("file generated: {s}", .{input_name});
-    }
-
     const testinput_name = try std.fmt.allocPrint(
         allocator,
         "{d}/input/day{d:0>2}_test.txt",
