@@ -91,7 +91,7 @@ pub fn downloadInputToFile(allocator: Allocator, year: u16, day: u8) !void {
     std.log.info("input downloaded: {s}", .{filename});
 }
 
-pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
+pub fn createFiles(allocator: Allocator, year: u16, day: u8) !void {
     const src_dirname = try std.fmt.allocPrint(
         allocator,
         "{d}/src",
@@ -117,7 +117,7 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
         const testinput_file = try std.fs.cwd().createFile(testinput_name, .{});
         defer testinput_file.close();
 
-        std.log.info("file generated: {s}", .{testinput_name});
+        std.log.info("file created: {s}", .{testinput_name});
     }
 
     const src_name = try std.fmt.allocPrint(
@@ -154,7 +154,7 @@ pub fn generateFiles(allocator: Allocator, year: u16, day: u8) !void {
             .data = template,
         });
 
-        std.log.info("file generated: {s}", .{src_name});
+        std.log.info("file created: {s}", .{src_name});
     }
 }
 
@@ -183,7 +183,7 @@ pub fn main() !void {
 
     while (args.next()) |arg| {
         switch (arg[0]) {
-            'c' => try generateFiles(allocator, year, day),
+            'c' => try createFiles(allocator, year, day),
             'i' => try downloadInputToFile(allocator, year, day),
             else => return,
         }
