@@ -22,11 +22,7 @@ pub fn AOCSolver(comptime T: type) type {
         year: u16,
         day: u8,
         allocator: Allocator,
-        solve: *const fn (
-            allocator: Allocator,
-            data: []const u8,
-            test_run: bool,
-        ) anyerror!T,
+        solve: *const fn (Allocator, []const u8, bool) anyerror!T,
 
         const Self = @This();
 
@@ -34,11 +30,7 @@ pub fn AOCSolver(comptime T: type) type {
             year: u16,
             day: u8,
             allocator: Allocator,
-            solve: *const fn (
-                allocator: Allocator,
-                data: []const u8,
-                test_run: bool,
-            ) anyerror!T,
+            solve: *const fn (Allocator, []const u8, bool) anyerror!T,
         ) Self {
             return .{
                 .year = year,
