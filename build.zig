@@ -40,6 +40,7 @@ pub fn build(b: *std.Build) void {
 
     // -------------------------------------------------------------------------
 
+    const run_step_all = b.step("all", "Run all AOC");
     for (2015..2026) |year| {
         const run_step_year = b.step(b.fmt("{d}", .{year}), b.fmt("Run AOC {d}", .{year}));
 
@@ -71,6 +72,7 @@ pub fn build(b: *std.Build) void {
             run_cmd.step.dependOn(b.getInstallStep());
 
             run_step_year.dependOn(&run_cmd.step);
+            run_step_all.dependOn(&run_cmd.step);
         }
     }
 
