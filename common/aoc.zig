@@ -52,7 +52,10 @@ pub fn AOCSolver(comptime T: type) type {
 
         pub fn run(self: Self, test_run: bool) !void {
             const filename = try self.input_filename(test_run);
+            defer self.allocator.free(filename);
+
             const data = try self.read_input(filename);
+            defer self.allocator.free(data);
 
             var timer = try std.time.Timer.start();
 
