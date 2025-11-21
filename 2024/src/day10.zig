@@ -60,11 +60,10 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     defer grid.deinit();
     try grid.ensureTotalCapacity(@intCast(data.len));
 
-    var it = std.mem.splitScalar(u8, data, '\n');
+    const lines = try aoc.splitlines(allocator, data);
 
-    var y: u32 = 0;
-    while (it.next()) |r| : (y += 1) {
-        for (r, 0..) |c, x| {
+    for (0.., lines) |y, r| {
+        for (0.., r) |x, c| {
             const p: pos.Point = .{ @intCast(x), @intCast(y) };
             const n: u8 = try std.fmt.charToDigit(c, 10);
 

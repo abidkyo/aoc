@@ -181,4 +181,68 @@ test "call run" {
     _ = try solver.run(false);
 }
 
+pub fn splitlines(allocator: Allocator, buffer: []const u8) ![][]const u8 {
+    var lines = try std.ArrayList([]const u8).initCapacity(allocator, buffer.len);
+    defer lines.deinit(allocator);
+
+    var it = std.mem.splitScalar(u8, buffer, '\n');
+
+    while (it.next()) |line| {
+        try lines.appendBounded(line);
+    }
+    return lines.toOwnedSlice(allocator);
+}
+
+test "splitline" {
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const buffer =
+        \\hello
+        \\world
+        \\zig
+    ;
+
+    const result = try splitlines(allocator, buffer);
+
+    try std.testing.expectEqual(3, result.len);
+    try std.testing.expectEqualStrings("hello", result[0]);
+    try std.testing.expectEqualStrings("world", result[1]);
+    try std.testing.expectEqualStrings("zig", result[2]);
+}
+
+pub fn split(allocator: Allocator, buffer: []const u8, delimiter: []const u8) ![][]const u8 {
+    var lines = try std.ArrayList([]const u8).initCapacity(allocator, buffer.len);
+    defer lines.deinit(allocator);
+
+    var it = std.mem.splitSequence(u8, buffer, delimiter);
+
+    while (it.next()) |line| {
+        try lines.appendBounded(line);
+    }
+    return lines.toOwnedSlice(allocator);
+}
+
+test "split" {
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const buffer =
+        \\hello
+        \\world
+        \\
+        \\zig
+    ;
+
+    const result = try split(allocator, buffer, "\n\n");
+
+    try std.testing.expectEqual(2, result.len);
+    try std.testing.expectEqualStrings("hello\nworld", result[0]);
+    try std.testing.expectEqualStrings("zig", result[1]);
+}
+
 // EOF -------------------------------------------------------------------------
