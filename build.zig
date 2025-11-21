@@ -6,6 +6,10 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    if (optimize == .ReleaseFast) {
+        b.exe_dir = b.getInstallPath(.{ .custom = "fast" }, "");
+    }
+
     // -------------------------------------------------------------------------
 
     const aoc = b.addModule("aoc", .{
