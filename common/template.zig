@@ -4,6 +4,7 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 const aoc = @import("aoc");
+const pos = @import("position");
 
 pub const Result = struct {
     p1: u32,
@@ -15,11 +16,15 @@ pub const Result = struct {
 };
 
 pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
-    _ = allocator;
-    _ = data;
     _ = test_run;
 
-    var result: Result = .{ .p1 = 0, .p2 = 0 };
+    var result: Result = .{ .p1 = undefined, .p2 = undefined };
+
+    const lines = try aoc.splitlines(allocator, data);
+
+    for (lines) |line| {
+        _ = line;
+    }
 
     result.p1 = 0;
     result.p2 = 0;
@@ -38,14 +43,14 @@ pub fn main() !void {
         "{{day}}",
         allocator,
         solve,
-        Result{ .p1 = 0, .p2 = 0 },
-        Result{ .p1 = 0, .p2 = 0 },
+        Result{ .p1 = undefined, .p2 = undefined },
+        Result{ .p1 = undefined, .p2 = undefined },
     );
 
     solver.info();
 
-    _ = try solver.run(true);
-    // _ = try solver.run(false);
+    try solver.run(true);
+    // try solver.run(false);
 }
 
 // EOF -------------------------------------------------------------------------
