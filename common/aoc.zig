@@ -66,8 +66,23 @@ pub fn AOCSolver(comptime T: type) type {
             std.log.info("{s}: {f}, t = {D}", .{ prefix, result, duration });
 
             const expected_result = if (test_run) self.expected_test else self.expected_real;
-            if (!std.meta.eql(result, expected_result)) {
-                std.log.err("expected: {f}", .{expected_result});
+
+            // std.meta.eql not follow pointer
+            // need std.mem.eql to compare strings
+            // rely on compile error for another type
+
+            const p1_ok: bool = switch (@typeInfo(@FieldType(T, "p1"))) {
+                .pointer => std.mem.eql(u8, result.p1, expected_result.p1),
+                else => std.meta.eql(result.p1, expected_result.p1),
+            };
+
+            const p2_ok: bool = switch (@typeInfo(@FieldType(T, "p2"))) {
+                .pointer => std.mem.eql(u8, result.p2, expected_result.p2),
+                else => std.meta.eql(result.p2, expected_result.p2),
+            };
+
+            if (!p1_ok or !p2_ok) {
+                std.log.info("expected: {f}", .{expected_result});
                 return error.WrongResult;
             }
 
@@ -177,8 +192,27 @@ test "call run" {
         TestResult{ .p1 = 1234, .p2 = "solving" },
     );
 
-    _ = try solver.run(true);
-    _ = try solver.run(false);
+    try solver.run(true);
+    try solver.run(false);
+}
+
+test "wrong result" {
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const solver: AOCSolver(TestResult) = .init(
+        2024,
+        1,
+        allocator,
+        test_solve,
+        TestResult{ .p1 = 5678, .p2 = "solving" },
+        TestResult{ .p1 = 1234, .p2 = "wolving" },
+    );
+
+    try std.testing.expectError(error.WrongResult, solver.run(true));
+    try std.testing.expectError(error.WrongResult, solver.run(false));
 }
 
 pub fn splitlines(allocator: Allocator, buffer: []const u8) ![][]const u8 {
