@@ -216,15 +216,8 @@ test "wrong result" {
 }
 
 pub fn splitlines(allocator: Allocator, buffer: []const u8) ![][]const u8 {
-    var lines = try std.ArrayList([]const u8).initCapacity(allocator, buffer.len);
-    defer lines.deinit(allocator);
-
     var it = std.mem.splitScalar(u8, buffer, '\n');
-
-    while (it.next()) |line| {
-        try lines.appendBounded(line);
-    }
-    return lines.toOwnedSlice(allocator);
+    return try iterator2slice([]const u8, allocator, &it, buffer.len);
 }
 
 test "splitline" {
@@ -248,15 +241,8 @@ test "splitline" {
 }
 
 pub fn split(allocator: Allocator, buffer: []const u8, delimiter: []const u8) ![][]const u8 {
-    var lines = try std.ArrayList([]const u8).initCapacity(allocator, buffer.len);
-    defer lines.deinit(allocator);
-
     var it = std.mem.splitSequence(u8, buffer, delimiter);
-
-    while (it.next()) |line| {
-        try lines.appendBounded(line);
-    }
-    return lines.toOwnedSlice(allocator);
+    return try iterator2slice([]const u8, allocator, &it, buffer.len);
 }
 
 test "split" {
@@ -277,6 +263,38 @@ test "split" {
     try std.testing.expectEqual(2, result.len);
     try std.testing.expectEqualStrings("hello\nworld", result[0]);
     try std.testing.expectEqualStrings("zig", result[1]);
+}
+
+// i think anytype is fine for the iterator
+pub fn iterator2slice(T: type, allocator: Allocator, it: anytype, size: usize) ![]T {
+    var lines = try std.ArrayList(T).initCapacity(allocator, size);
+    defer lines.deinit(allocator);
+
+    while (it.next()) |line| {
+        try lines.appendBounded(line);
+    }
+    return lines.toOwnedSlice(allocator);
+}
+
+test "iterator2slice" {
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const buffer =
+        \\hello
+        \\world
+        \\zig
+    ;
+
+    var it = std.mem.splitScalar(u8, buffer, '\n');
+    const result = try iterator2slice([]const u8, allocator, &it, 3);
+
+    try std.testing.expectEqual(3, result.len);
+    try std.testing.expectEqualStrings("hello", result[0]);
+    try std.testing.expectEqualStrings("world", result[1]);
+    try std.testing.expectEqualStrings("zig", result[2]);
 }
 
 // EOF -------------------------------------------------------------------------
