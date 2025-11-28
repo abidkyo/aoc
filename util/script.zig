@@ -131,7 +131,7 @@ pub fn createFiles(allocator: Allocator, year: u16, day: u8) !void {
     } else |_| {
         var template = try std.fs.cwd().readFileAlloc(
             allocator,
-            "common/template.zig",
+            "lib/template.zig",
             std.math.maxInt(usize),
         );
         template = try std.mem.replaceOwned(

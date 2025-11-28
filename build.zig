@@ -13,7 +13,7 @@ pub fn build(b: *std.Build) void {
     // -------------------------------------------------------------------------
 
     const aoc = b.addModule("aoc", .{
-        .root_source_file = b.path("common/aoc.zig"),
+        .root_source_file = b.path("lib/aoc.zig"),
         .target = target,
     });
 
@@ -26,7 +26,7 @@ pub fn build(b: *std.Build) void {
     // -------------------------------------------------------------------------
 
     const position = b.addModule("position", .{
-        .root_source_file = b.path("common/position.zig"),
+        .root_source_file = b.path("lib/position.zig"),
         .target = target,
     });
 
@@ -85,7 +85,7 @@ pub fn build(b: *std.Build) void {
     const script = b.addExecutable(.{
         .name = "script",
         .root_module = b.createModule(.{
-            .root_source_file = b.path("common/script.zig"),
+            .root_source_file = b.path("util/script.zig"),
             .target = target,
             .optimize = optimize,
         }),
