@@ -38,9 +38,23 @@ pub fn build(b: *std.Build) void {
 
     // -------------------------------------------------------------------------
 
+    const counter = b.addModule("counter", .{
+        .root_source_file = b.path("lib/counter.zig"),
+        .target = target,
+    });
+
+    const counter_test = b.addTest(.{
+        .name = "counter",
+        .root_module = counter,
+    });
+    const run_counter_test = b.addRunArtifact(counter_test);
+
+    // -------------------------------------------------------------------------
+
     const test_step = b.step("test", "Run module tests");
     test_step.dependOn(&run_aoc_test.step);
     test_step.dependOn(&run_position_test.step);
+    test_step.dependOn(&run_counter_test.step);
 
     // -------------------------------------------------------------------------
 
@@ -64,6 +78,7 @@ pub fn build(b: *std.Build) void {
                     .imports = &.{
                         .{ .name = "aoc", .module = aoc },
                         .{ .name = "position", .module = position },
+                        .{ .name = "counter", .module = counter },
                     },
                 }),
             });

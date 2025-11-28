@@ -69,7 +69,7 @@ pub fn AOCSolver(comptime T: type) type {
 
             // std.meta.eql not follow pointer
             // need std.mem.eql to compare strings
-            // rely on compile error for another type
+            // rely on compile error for other types
 
             const p1_ok: bool = switch (@typeInfo(@FieldType(T, "p1"))) {
                 .pointer => std.mem.eql(u8, result.p1, expected_result.p1),
