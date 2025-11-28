@@ -4,6 +4,7 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 const aoc = @import("aoc");
+const Counter = @import("counter").Counter;
 const pos = @import("position");
 
 pub const Result = struct {
@@ -14,34 +15,6 @@ pub const Result = struct {
         return writer.print("p1 = {d}, p2 = {d}", .{ self.p1, self.p2 });
     }
 };
-
-pub fn countChars(allocator: Allocator, chars: []const u8) !std.AutoArrayHashMap(u8, u8) {
-    var counter: std.AutoArrayHashMap(u8, u8) = .init(allocator);
-    try counter.ensureTotalCapacity(@intCast(chars.len));
-
-    for (chars) |c| {
-        const n: u8 = counter.get(c) orelse 0;
-        counter.putAssumeCapacity(c, n + 1);
-    }
-
-    const SortContext = struct {
-        keys: []u8,
-        values: []u8,
-
-        pub fn lessThan(ctx: @This(), a_index: usize, b_index: usize) bool {
-            if (ctx.values[a_index] == ctx.values[b_index]) {
-                // ascending keys
-                return ctx.keys[a_index] < ctx.keys[b_index];
-            }
-            // descending values
-            return ctx.values[a_index] > ctx.values[b_index];
-        }
-    };
-    const sort_ctx = SortContext{ .keys = counter.keys(), .values = counter.values() };
-    counter.sort(sort_ctx);
-
-    return counter;
-}
 
 pub fn rotateChars(allocator: Allocator, chars: []const u8, count: u16) ![]const u8 {
     var result = try std.ArrayList(u8).initCapacity(allocator, chars.len);
@@ -71,8 +44,11 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
         const id = try std.fmt.parseUnsigned(u16, slice[slice.len - 2], 10);
         const checksum = slice[slice.len - 1];
 
-        var counter = try countChars(allocator, chars);
+        var counter = Counter(u8).init(allocator);
         defer counter.deinit();
+
+        try counter.addFromSlice(chars);
+        counter.sortDesc();
 
         const frequents = counter.keys()[0..5];
         if (std.mem.eql(u8, frequents, checksum)) {
