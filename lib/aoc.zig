@@ -118,7 +118,7 @@ test "input filename" {
     const allocator = arena.allocator();
 
     const solver: AOCSolver(TestResult) = .init(
-        2024,
+        2014,
         1,
         allocator,
         test_solve,
@@ -128,11 +128,11 @@ test "input filename" {
 
     const filename_test = try solver.input_filename(true);
 
-    try std.testing.expectEqualStrings("2024/input/day01_test.txt", filename_test);
+    try std.testing.expectEqualStrings("2014/input/day01_test.txt", filename_test);
 
     const filename = try solver.input_filename(false);
 
-    try std.testing.expectEqualStrings("2024/input/day01.txt", filename);
+    try std.testing.expectEqualStrings("2014/input/day01.txt", filename);
 }
 
 test "read input" {
@@ -142,7 +142,7 @@ test "read input" {
     const allocator = arena.allocator();
 
     const solver: AOCSolver(TestResult) = .init(
-        2024,
+        2014,
         1,
         allocator,
         test_solve,
@@ -164,7 +164,7 @@ test "call solve" {
     const allocator = arena.allocator();
 
     const solver: AOCSolver(TestResult) = .init(
-        2024,
+        2014,
         1,
         allocator,
         test_solve,
@@ -184,7 +184,7 @@ test "call run" {
     const allocator = arena.allocator();
 
     const solver: AOCSolver(TestResult) = .init(
-        2024,
+        2014,
         1,
         allocator,
         test_solve,
@@ -203,7 +203,7 @@ test "wrong result" {
     const allocator = arena.allocator();
 
     const solver: AOCSolver(TestResult) = .init(
-        2024,
+        2014,
         1,
         allocator,
         test_solve,
