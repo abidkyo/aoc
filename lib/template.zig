@@ -41,7 +41,6 @@ pub fn main() !void {
     const solver: aoc.AOCSolver(Result) = .init(
         "{{year}}",
         "{{day}}",
-        allocator,
         solve,
         Result{ .p1 = undefined, .p2 = undefined },
         Result{ .p1 = undefined, .p2 = undefined },
@@ -49,8 +48,8 @@ pub fn main() !void {
 
     solver.info();
 
-    try solver.run(true);
-    // try solver.run(false);
+    try solver.run(allocator, true);
+    // try solver.run(allocator, false);
 }
 
 // EOF -------------------------------------------------------------------------

@@ -57,7 +57,6 @@ pub fn main() !void {
     const solver: aoc.AOCSolver(Result) = .init(
         2016,
         5,
-        allocator,
         solve,
         Result{ .p1 = "18f47a30".*, .p2 = "05ace8e3".* },
         Result{ .p1 = "f77a0e6e".*, .p2 = "999828ec".* },
@@ -65,8 +64,8 @@ pub fn main() !void {
 
     solver.info();
 
-    try solver.run(true);
-    try solver.run(false);
+    try solver.run(allocator, true);
+    try solver.run(allocator, false);
 }
 
 // EOF -------------------------------------------------------------------------
