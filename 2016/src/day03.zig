@@ -23,6 +23,7 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     result.p1 = @intFromBool(false);
 
     const lines = try aoc.splitlines(allocator, data);
+    defer allocator.free(lines);
 
     var a: [3]u16 = .{ 0, 0, 0 };
     var b: [3]u16 = .{ 0, 0, 0 };

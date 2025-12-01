@@ -21,6 +21,7 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     var result: Result = .{ .p1 = undefined, .p2 = undefined };
 
     const lines = try aoc.splitlines(allocator, data);
+    defer allocator.free(lines);
 
     for (lines) |line| {
         _ = line;

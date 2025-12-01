@@ -111,16 +111,15 @@ pub fn AOCSolver(comptime T: type) type {
                 filename,
                 std.math.maxInt(usize),
             );
-            return std.mem.trimEnd(u8, data, "\n");
+            defer allocator.free(data);
+
+            return allocator.dupe(u8, std.mem.trimEnd(u8, data, "\n"));
         }
     };
 }
 
 test "input filename" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const solver: AOCSolver(TestResult) = .init(
         2014,
@@ -131,19 +130,18 @@ test "input filename" {
     );
 
     const filename_test = try solver.input_filename(allocator, true);
+    defer allocator.free(filename_test);
 
     try std.testing.expectEqualStrings("2014/input/day01_test.txt", filename_test);
 
     const filename = try solver.input_filename(allocator, false);
+    defer allocator.free(filename);
 
     try std.testing.expectEqualStrings("2014/input/day01.txt", filename);
 }
 
 test "read input" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const solver: AOCSolver(TestResult) = .init(
         2014,
@@ -154,17 +152,17 @@ test "read input" {
     );
 
     const filename_test = try solver.input_filename(allocator, true);
+    defer allocator.free(filename_test);
+
     const data = try solver.read_input(allocator, filename_test);
+    defer allocator.free(data);
 
     try std.testing.expect(data.len != 0);
     try std.testing.expect(data[data.len - 1] != '\n');
 }
 
 test "call solve" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const solver: AOCSolver(TestResult) = .init(
         2014,
@@ -180,10 +178,7 @@ test "call solve" {
 }
 
 test "call run" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const solver: AOCSolver(TestResult) = .init(
         2014,
@@ -198,10 +193,7 @@ test "call run" {
 }
 
 test "wrong result" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const solver: AOCSolver(TestResult) = .init(
         2014,
@@ -221,10 +213,7 @@ pub fn splitlines(allocator: Allocator, buffer: []const u8) ![][]const u8 {
 }
 
 test "splitline" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const buffer =
         \\hello
@@ -233,6 +222,7 @@ test "splitline" {
     ;
 
     const result = try splitlines(allocator, buffer);
+    defer allocator.free(result);
 
     try std.testing.expectEqual(3, result.len);
     try std.testing.expectEqualStrings("hello", result[0]);
@@ -246,10 +236,7 @@ pub fn split(allocator: Allocator, buffer: []const u8, delimiter: []const u8) ![
 }
 
 test "split" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const buffer =
         \\hello
@@ -259,6 +246,7 @@ test "split" {
     ;
 
     const result = try split(allocator, buffer, "\n\n");
+    defer allocator.free(result);
 
     try std.testing.expectEqual(2, result.len);
     try std.testing.expectEqualStrings("hello\nworld", result[0]);
@@ -277,10 +265,7 @@ pub fn iterator2slice(T: type, allocator: Allocator, it: anytype, size: usize) !
 }
 
 test "iterator2slice" {
-    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
+    const allocator = std.testing.allocator;
 
     const buffer =
         \\hello
@@ -290,6 +275,7 @@ test "iterator2slice" {
 
     var it = std.mem.splitScalar(u8, buffer, '\n');
     const result = try iterator2slice([]const u8, allocator, &it, 3);
+    defer allocator.free(result);
 
     try std.testing.expectEqual(3, result.len);
     try std.testing.expectEqualStrings("hello", result[0]);

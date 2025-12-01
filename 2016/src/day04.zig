@@ -35,6 +35,7 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     var result: Result = .{ .p1 = 0, .p2 = 0 };
 
     const lines = try aoc.splitlines(allocator, data);
+    defer allocator.free(lines);
 
     for (lines) |line| {
         var it = std.mem.tokenizeAny(u8, line, "-[]");

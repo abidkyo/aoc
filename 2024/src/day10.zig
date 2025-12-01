@@ -61,6 +61,7 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     try grid.ensureTotalCapacity(@intCast(data.len));
 
     const lines = try aoc.splitlines(allocator, data);
+    defer allocator.free(lines);
 
     for (0.., lines) |y, r| {
         for (0.., r) |x, c| {

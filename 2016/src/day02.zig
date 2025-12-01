@@ -37,6 +37,7 @@ pub fn getKeypadMap(allocator: Allocator, keypad_str: []const u8) !PointMap {
     try keypad.ensureTotalCapacity(@intCast(keypad_str.len));
 
     const keypad_lines = try aoc.splitlines(allocator, keypad_str);
+    defer allocator.free(keypad_lines);
 
     for (0.., keypad_lines) |y, line| {
         for (0.., line) |x, c| {
@@ -78,6 +79,7 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     var result: Result = .{ .p1 = undefined, .p2 = undefined };
 
     const lines = try aoc.splitlines(allocator, data);
+    defer allocator.free(lines);
 
     var p1_keypad = try getKeypadMap(allocator, p1_keypad_str);
     defer p1_keypad.deinit();
