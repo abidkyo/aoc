@@ -51,10 +51,24 @@ pub fn build(b: *std.Build) void {
 
     // -------------------------------------------------------------------------
 
+    const number = b.addModule("number", .{
+        .root_source_file = b.path("lib/number.zig"),
+        .target = target,
+    });
+
+    const number_test = b.addTest(.{
+        .name = "number",
+        .root_module = number,
+    });
+    const run_number_test = b.addRunArtifact(number_test);
+
+    // -------------------------------------------------------------------------
+
     const test_step = b.step("test", "Run module tests");
     test_step.dependOn(&run_aoc_test.step);
     test_step.dependOn(&run_position_test.step);
     test_step.dependOn(&run_counter_test.step);
+    test_step.dependOn(&run_number_test.step);
 
     // -------------------------------------------------------------------------
 
