@@ -5,6 +5,7 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 const aoc = @import("aoc");
+const number = @import("number");
 
 pub const Result = struct {
     p1: usize,
@@ -17,6 +18,7 @@ pub const Result = struct {
 
 pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
     _ = test_run;
+    _ = allocator;
 
     var result: Result = .{ .p1 = 0, .p2 = 0 };
 
@@ -31,11 +33,8 @@ pub fn solve(allocator: Allocator, data: []const u8, test_run: bool) !Result {
         j = try std.fmt.parseUnsigned(usize, it.next().?, 10);
 
         for (i..(j + 1)) |num| {
-            const s = try std.fmt.allocPrint(allocator, "{d}", .{num});
-            defer allocator.free(s);
-
-            if (isSequenceRepeatedTwice(s)) result.p1 += num;
-            if (isSequenceRepeated(s)) result.p2 += num;
+            if (number.isSequenceRepeatedTwice(num)) result.p1 += num;
+            if (number.isSequenceRepeated(num)) result.p2 += num;
         }
     }
 
