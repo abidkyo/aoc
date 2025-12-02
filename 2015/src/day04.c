@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
     }
     free(chars);
 
-    printf("p1 = %u, p2 = %u", p1, p2);
+    printf("p1 = %u, p2 = %u\n", p1, p2);
     assert(p1 == 346386);
     assert(p2 == 9958218);
 
