@@ -12,69 +12,42 @@ pub fn build(b: *std.Build) void {
 
     // -------------------------------------------------------------------------
 
-    const aoc = b.addModule("aoc", .{
-        .root_source_file = b.path("lib/aoc.zig"),
-        .target = target,
-    });
-
-    const aoc_test = b.addTest(.{
-        .name = "aoc",
-        .root_module = aoc,
-    });
-    const run_aoc_test = b.addRunArtifact(aoc_test);
-
-    // -------------------------------------------------------------------------
-
-    const position = b.addModule("position", .{
-        .root_source_file = b.path("lib/position.zig"),
-        .target = target,
-    });
-
-    const position_test = b.addTest(.{
-        .name = "position",
-        .root_module = position,
-    });
-    const run_position_test = b.addRunArtifact(position_test);
-
-    // -------------------------------------------------------------------------
-
-    const counter = b.addModule("counter", .{
-        .root_source_file = b.path("lib/counter.zig"),
-        .target = target,
-    });
-
-    const counter_test = b.addTest(.{
-        .name = "counter",
-        .root_module = counter,
-    });
-    const run_counter_test = b.addRunArtifact(counter_test);
-
-    // -------------------------------------------------------------------------
-
-    const number = b.addModule("number", .{
-        .root_source_file = b.path("lib/number.zig"),
-        .target = target,
-    });
-
-    const number_test = b.addTest(.{
-        .name = "number",
-        .root_module = number,
-    });
-    const run_number_test = b.addRunArtifact(number_test);
+    const modules = [_][]const u8{
+        "aoc",
+        "counter",
+        "number",
+        "position",
+    };
 
     // -------------------------------------------------------------------------
 
     const test_step = b.step("test", "Run module tests");
-    test_step.dependOn(&run_aoc_test.step);
-    test_step.dependOn(&run_position_test.step);
-    test_step.dependOn(&run_counter_test.step);
-    test_step.dependOn(&run_number_test.step);
+
+    for (modules) |module| {
+        const mod = b.addModule(module, .{
+            .root_source_file = b.path(b.fmt("lib/{s}.zig", .{module})),
+            .target = target,
+        });
+
+        const mod_test = b.addTest(.{
+            .name = module,
+            .root_module = mod,
+        });
+
+        const run_mod_test = b.addRunArtifact(mod_test);
+        test_step.dependOn(&run_mod_test.step);
+    }
+
+    var modules_it = b.modules.iterator();
 
     // -------------------------------------------------------------------------
 
     const run_step_all = b.step("all", "Run all AOC");
     for (2015..2026) |year| {
-        const run_step_year = b.step(b.fmt("{d}", .{year}), b.fmt("Run AOC {d}", .{year}));
+        const run_step_year = b.step(
+            b.fmt("{d}", .{year}),
+            b.fmt("Run AOC {d}", .{year}),
+        );
 
         for (1..26) |day| {
             const name = b.fmt("{d}_{d:0>2}", .{ year, day });
@@ -89,13 +62,13 @@ pub fn build(b: *std.Build) void {
                     .root_source_file = b.path(src),
                     .target = target,
                     .optimize = optimize,
-                    .imports = &.{
-                        .{ .name = "aoc", .module = aoc },
-                        .{ .name = "position", .module = position },
-                        .{ .name = "counter", .module = counter },
-                    },
                 }),
             });
+
+            while (modules_it.next()) |module| {
+                exe.root_module.addImport(module.key_ptr.*, module.value_ptr.*);
+            }
+            modules_it.reset();
 
             b.installArtifact(exe);
 
