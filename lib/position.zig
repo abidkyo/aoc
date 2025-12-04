@@ -40,6 +40,13 @@ test "point operation" {
     try std.testing.expectEqual(Point{ 5, 10 }, a * n);
 }
 
+pub const dir4_map = std.StaticStringMap(Point).initComptime(.{
+    .{ "u", .{ 0, -1 } },
+    .{ "r", .{ 1, 0 } },
+    .{ "d", .{ 0, 1 } },
+    .{ "l", .{ -1, 0 } },
+});
+
 pub const dir8_map = std.StaticStringMap(Point).initComptime(.{
     .{ "u", .{ 0, -1 } },
     .{ "r", .{ 1, 0 } },
@@ -61,32 +68,42 @@ pub const Direction = enum {
     down_right,
     down_left,
 
+    pub fn fromChar(c: u8) ?Point {
+        return dir4_map.get(&.{c});
+    }
+
     pub fn fromString(d: []const u8) ?Point {
         return dir8_map.get(d);
     }
 
     pub fn fromEnum(d: Direction) Point {
         return switch (d) {
-            .up => .{ 0, -1 },
-            .right => .{ 1, 0 },
-            .down => .{ 0, 1 },
-            .left => .{ -1, 0 },
-            .upper_left => .{ -1, -1 },
-            .upper_right => .{ 1, -1 },
-            .down_right => .{ 1, 1 },
-            .down_left => .{ -1, 1 },
+            .up => dir8_map.get("u").?,
+            .right => dir8_map.get("r").?,
+            .down => dir8_map.get("d").?,
+            .left => dir8_map.get("l").?,
+            .upper_left => dir8_map.get("ul").?,
+            .upper_right => dir8_map.get("ur").?,
+            .down_right => dir8_map.get("dr").?,
+            .down_left => dir8_map.get("dl").?,
         };
     }
 };
 
 test "direction value" {
-    try std.testing.expectEqual(.{ 1, 0 }, Direction.fromString("r"));
-    try std.testing.expectEqual(.{ 1, -1 }, Direction.fromString("ur"));
+    try std.testing.expectEqual(.{ 1, 0 }, Direction.fromChar('r'));
+    try std.testing.expectEqual(.{ 0, 1 }, Direction.fromChar('d'));
+    try std.testing.expectEqual(.{ -1, 0 }, Direction.fromChar('l'));
 
-    try std.testing.expectEqual(.{ 0, 1 }, Direction.fromEnum(.down));
-    try std.testing.expectEqual(.{ -1, 1 }, Direction.fromEnum(.down_left));
+    try std.testing.expectEqual(.{ 1, -1 }, Direction.fromString("ur"));
+    try std.testing.expectEqual(.{ -1, 1 }, Direction.fromString("dl"));
+    try std.testing.expectEqual(.{ 1, 1 }, Direction.fromString("dr"));
+
+    try std.testing.expectEqual(.{ 0, -1 }, Direction.fromEnum(.up));
+    try std.testing.expectEqual(.{ -1, -1 }, Direction.fromEnum(.upper_left));
 }
 
+// clockwise rotation
 pub const dir4 = [_]Direction{ .up, .right, .down, .left };
 
 test "dir4 value" {
