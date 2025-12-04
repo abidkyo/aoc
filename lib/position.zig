@@ -40,6 +40,17 @@ test "point operation" {
     try std.testing.expectEqual(Point{ 5, 10 }, a * n);
 }
 
+pub const dir8_map = std.StaticStringMap(Point).initComptime(.{
+    .{ "u", .{ 0, -1 } },
+    .{ "r", .{ 1, 0 } },
+    .{ "d", .{ 0, 1 } },
+    .{ "l", .{ -1, 0 } },
+    .{ "ul", .{ -1, -1 } },
+    .{ "ur", .{ 1, -1 } },
+    .{ "dr", .{ 1, 1 } },
+    .{ "dl", .{ -1, 1 } },
+});
+
 pub const Direction = enum {
     up,
     right,
@@ -51,17 +62,6 @@ pub const Direction = enum {
     down_left,
 
     pub fn fromString(d: []const u8) ?Point {
-        const dir8_map = std.StaticStringMap(Point).initComptime(.{
-            .{ "u", .{ 0, -1 } },
-            .{ "r", .{ 1, 0 } },
-            .{ "d", .{ 0, 1 } },
-            .{ "l", .{ -1, 0 } },
-            .{ "ul", .{ -1, -1 } },
-            .{ "ur", .{ 1, -1 } },
-            .{ "dr", .{ 1, 1 } },
-            .{ "dl", .{ -1, 1 } },
-        });
-
         return dir8_map.get(d);
     }
 
