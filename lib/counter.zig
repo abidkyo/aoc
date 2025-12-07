@@ -4,12 +4,69 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 const test_allocator = std.testing.allocator;
 
-pub fn Counter(comptime T: type) type {
+pub fn Counter(comptime K: type) type {
     return struct {
-        map: resolveType(T),
+        map: resolveType(K),
+
+        const Self = @This();
+
+        pub fn init(allocator: Allocator) Self {
+            return .{ .map = .init(allocator) };
+        }
+
+        pub fn deinit(self: *Self) void {
+            self.map.deinit();
+        }
+
+        pub fn clone(self: Self) !Self {
+            const new_map = try self.map.clone();
+            return .{ .map = new_map };
+        }
+
+        pub fn get(self: Self, item: K) usize {
+            return self.map.get(item) orelse 0;
+        }
+
+        pub fn keys(self: Self) []K {
+            return self.map.keys();
+        }
+
+        pub fn values(self: Self) []usize {
+            return self.map.values();
+        }
+
+        pub fn total(self: Self) usize {
+            var sum: usize = 0;
+            for (self.map.values()) |val| sum += val;
+            return sum;
+        }
+
+        pub fn increment(self: *Self, item: K, n: usize) !void {
+            const val = self.map.get(item) orelse 0;
+            try self.map.put(item, val + n);
+        }
+
+        pub fn addFromSlice(self: *Self, slice: []const K) !void {
+            try self.map.ensureUnusedCapacity(slice.len);
+
+            for (slice) |item| try self.increment(item, 1);
+        }
+
+        pub fn addFromIterator(self: *Self, it: anytype) !void {
+            try self.map.ensureUnusedCapacity(it.buffer.len);
+            while (it.next()) |item| try self.increment(item, 1);
+        }
+
+        pub fn sortAsc(self: *Self) void {
+            self.sort(false);
+        }
+
+        pub fn sortDesc(self: *Self) void {
+            self.sort(true);
+        }
 
         const SortContext = struct {
-            keys: []T,
+            keys: []K,
             values: []usize,
             // reversed = false : ascending values
             // reversed = true  : descending values
@@ -26,60 +83,6 @@ pub fn Counter(comptime T: type) type {
                 return less_than;
             }
         };
-
-        const Self = @This();
-
-        pub fn init(allocator: Allocator) Self {
-            return .{
-                .map = .init(allocator),
-            };
-        }
-
-        pub fn deinit(self: *Self) void {
-            self.map.deinit();
-        }
-
-        pub fn get(self: Self, item: T) usize {
-            return self.map.get(item) orelse 0;
-        }
-
-        pub fn keys(self: Self) []T {
-            return self.map.keys();
-        }
-
-        pub fn values(self: Self) []usize {
-            return self.map.values();
-        }
-
-        pub fn total(self: Self) usize {
-            var sum: usize = 0;
-            for (self.map.values()) |val| sum += val;
-            return sum;
-        }
-
-        pub fn increment(self: *Self, item: T) !void {
-            const val = self.map.get(item) orelse 0;
-            try self.map.put(item, val + 1);
-        }
-
-        pub fn addFromSlice(self: *Self, slice: []const T) !void {
-            try self.map.ensureUnusedCapacity(slice.len);
-
-            for (slice) |item| try self.increment(item);
-        }
-
-        pub fn addFromIterator(self: *Self, it: anytype) !void {
-            try self.map.ensureUnusedCapacity(it.buffer.len);
-            while (it.next()) |item| try self.increment(item);
-        }
-
-        pub fn sortAsc(self: *Self) void {
-            self.sort(false);
-        }
-
-        pub fn sortDesc(self: *Self) void {
-            self.sort(true);
-        }
 
         pub fn sort(self: *Self, reversed: bool) void {
             const sort_ctx = SortContext{
