@@ -101,10 +101,10 @@ test "increment/get item" {
 
     try std.testing.expectEqual(counter.get("abc"), 0);
 
-    try counter.increment("abc");
+    try counter.increment("abc", 1);
     try std.testing.expectEqual(counter.get("abc"), 1);
 
-    try counter.increment("abc");
+    try counter.increment("abc", 1);
     try std.testing.expectEqual(counter.get("abc"), 2);
 }
 
